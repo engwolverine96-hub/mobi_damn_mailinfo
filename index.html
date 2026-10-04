@@ -1,0 +1,1697 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light">
+<meta name="theme-color" content="#4B3025">
+<title>منسق رسائل المواقع</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%234B3025'/%3E%3Cpath d='M32 14c-8 0-14 6-14 13.5 0 9.5 14 22.5 14 22.5s14-13 14-22.5C46 20 40 14 32 14z' fill='none' stroke='%23F7F2EC' stroke-width='4'/%3E%3Ccircle cx='32' cy='28' r='4.5' fill='%23F7F2EC'/%3E%3C/svg%3E">
+<style>
+:root {
+  --bg: #F7F2EC;
+  --card: #FFFCF8;
+  --surface: #FFFFFF;
+  --brown: #4B3025;
+  --brown-hover: #3C261D;
+  --cafe: #A67C5B;
+  --cafe-soft: #F2E7DB;
+  --cafe-softer: #FAF4EE;
+  --border: #E5D8CB;
+  --border-strong: #D6C3B1;
+  --text: #35271F;
+  --muted: #75665C;
+  --wa: #1E8055;
+  --wa-hover: #186946;
+  --ok: #1E8055;
+  --ok-soft: #E7F3EC;
+  --warn: #8A5A12;
+  --warn-soft: #FBF1DF;
+  --danger: #A33A2B;
+  --danger-soft: #FBEDEA;
+  --chat-bg: #EFE5DA;
+
+  --r-xl: 20px;
+  --r-lg: 16px;
+  --r-md: 12px;
+  --r-sm: 10px;
+
+  --s-1: 4px;
+  --s-2: 8px;
+  --s-3: 12px;
+  --s-4: 16px;
+  --s-5: 20px;
+  --s-6: 24px;
+  --s-8: 32px;
+
+  --tap: 48px;
+  --shadow: 0 1px 2px rgba(75, 48, 37, .05), 0 10px 30px rgba(75, 48, 37, .07);
+  --shadow-pop: 0 18px 50px rgba(53, 39, 31, .20);
+  --font: "Cairo", "Segoe UI", "Noto Sans Arabic", "Noto Kufi Arabic", "Geeza Pro", "Dubai", Tahoma, Arial, sans-serif;
+  --mono: "Segoe UI", Tahoma, Arial, sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 15px;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+body.sheet-open { overflow: hidden; }
+button, input, textarea, select { font: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 3px solid var(--cafe); outline-offset: 2px; }
+.sr-only {
+  position: absolute !important; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+.skip {
+  position: absolute; inset-inline-start: 12px; top: -60px; z-index: 100;
+  background: var(--brown); color: #fff; padding: 10px 16px; border-radius: var(--r-md);
+}
+.skip:focus { top: 12px; }
+
+.i { display: inline-grid; place-items: center; flex: none; line-height: 0; }
+.i svg { width: 20px; height: 20px; }
+.ltr { direction: ltr; unicode-bidi: isolate; }
+.num { direction: ltr; unicode-bidi: isolate; font-variant-numeric: tabular-nums; letter-spacing: .2px; }
+
+.wrap { width: 100%; max-width: 1200px; margin-inline: auto; padding-inline: var(--s-4); }
+@media (min-width: 768px) { .wrap { padding-inline: var(--s-6); } }
+
+/* ---------- Header ---------- */
+.app-header { padding-block: var(--s-6) var(--s-2); }
+.header-row { display: flex; align-items: center; justify-content: space-between; gap: var(--s-4); flex-wrap: wrap; }
+.brand { display: flex; align-items: center; gap: 14px; min-width: 0; }
+.brand-mark {
+  width: 52px; height: 52px; border-radius: 16px; flex: none;
+  background: linear-gradient(145deg, #5A3A2C, var(--brown));
+  color: #F7F2EC; display: grid; place-items: center;
+  box-shadow: 0 6px 16px rgba(75, 48, 37, .22);
+}
+.brand-mark svg { width: 28px; height: 28px; }
+.brand h1 { margin: 0; font-size: clamp(21px, 2.6vw, 27px); line-height: 1.3; color: var(--brown); font-weight: 800; }
+.subtitle { margin: 2px 0 0; color: var(--muted); font-size: 14.5px; }
+.pill {
+  display: inline-flex; align-items: center; gap: 8px; max-width: 100%;
+  padding: 7px 14px; border-radius: 999px; background: var(--card);
+  border: 1px solid var(--border); font-size: 13px; color: var(--muted);
+}
+.pill .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--ok); flex: none; }
+.pill[data-state="warn"] .dot { background: #C08A2E; }
+.pill[data-state="bad"] .dot { background: var(--danger); }
+
+/* ---------- Banner ---------- */
+.banner {
+  margin-top: var(--s-4); padding: var(--s-4); border-radius: var(--r-lg);
+  background: var(--warn-soft); border: 1px solid #EBD3A8; color: #5E3D0C;
+  display: flex; gap: var(--s-3); align-items: flex-start; flex-wrap: wrap;
+}
+.banner.bad { background: var(--danger-soft); border-color: #EBC5BE; color: #6E2219; }
+.banner-text { flex: 1 1 260px; min-width: 0; }
+.banner-text strong { display: block; margin-bottom: 2px; }
+.banner-actions { display: flex; gap: var(--s-2); flex-wrap: wrap; }
+
+/* ---------- Tabs ---------- */
+.tabs {
+  display: flex; gap: 4px; padding: 5px; margin-block: var(--s-4) var(--s-5);
+  background: #EDE2D6; border-radius: 16px; width: fit-content; max-width: 100%;
+}
+.tab {
+  min-height: var(--tap); padding: 0 20px; border: 0; background: transparent;
+  border-radius: 12px; font-weight: 700; color: var(--muted);
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  transition: background .15s, color .15s;
+}
+.tab:hover { color: var(--brown); }
+.tab[aria-selected="true"] { background: var(--card); color: var(--brown); box-shadow: 0 1px 4px rgba(75, 48, 37, .14); }
+@media (max-width: 520px) { .tabs { width: 100%; } .tab { flex: 1 1 0; padding: 0 8px; font-size: 14px; } }
+
+/* ---------- Cards ---------- */
+.card {
+  background: var(--card); border: 1px solid var(--border); border-radius: var(--r-xl);
+  box-shadow: var(--shadow); padding: var(--s-5); min-width: 0;
+}
+@media (min-width: 768px) { .card { padding: var(--s-6); } }
+.card-head { display: flex; align-items: center; justify-content: space-between; gap: var(--s-3); flex-wrap: wrap; margin-bottom: var(--s-5); }
+.card-title { display: flex; align-items: center; gap: 10px; margin: 0; font-size: 18px; color: var(--brown); font-weight: 800; }
+.card-title .badge-ic {
+  width: 38px; height: 38px; border-radius: 12px; background: var(--cafe-soft);
+  color: var(--brown); display: grid; place-items: center; flex: none;
+}
+
+/* ---------- Compose layout ---------- */
+.compose-grid { display: grid; gap: var(--s-5); grid-template-columns: minmax(0, 1fr); align-items: start; }
+@media (min-width: 960px) {
+  .compose-grid { grid-template-columns: minmax(0, 1.08fr) minmax(0, .92fr); gap: var(--s-6); }
+  .preview-card { position: sticky; top: var(--s-4); }
+}
+.fields { display: grid; gap: var(--s-5); }
+.people-group {
+  display: grid; gap: var(--s-4); padding: var(--s-4); border-radius: var(--r-lg);
+  background: var(--cafe-softer); border: 1px dashed var(--border-strong);
+}
+.group-label { margin: 0; font-size: 13.5px; color: var(--muted); display: flex; gap: 6px; align-items: center; }
+.field { display: grid; gap: 6px; min-width: 0; }
+.label { font-weight: 700; font-size: 14.5px; color: var(--text); display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.tag { font-size: 11.5px; font-weight: 700; padding: 1px 9px; border-radius: 999px; background: var(--cafe-soft); color: var(--brown); }
+.tag.optional { background: transparent; border: 1px solid var(--border); color: var(--muted); font-weight: 600; }
+.hint { margin: 0; font-size: 13px; color: var(--muted); min-height: 0; }
+.hint:empty { display: none; }
+.hint.need { color: var(--warn); }
+
+.input, .textarea {
+  width: 100%; min-height: var(--tap); padding: 10px 14px; border: 1px solid var(--border-strong);
+  border-radius: 14px; background: var(--surface); font-size: 16px; color: var(--text);
+  transition: border-color .15s, box-shadow .15s;
+}
+.input:hover, .textarea:hover { border-color: var(--cafe); }
+.input:focus, .textarea:focus { outline: none; border-color: var(--cafe); box-shadow: 0 0 0 3px rgba(166, 124, 91, .25); }
+.textarea { min-height: 132px; resize: vertical; line-height: 1.7; }
+.input::placeholder, .textarea::placeholder { color: #A39488; }
+.input.ltr-input { direction: ltr; text-align: right; }
+input[type="search"]::-webkit-search-cancel-button { -webkit-appearance: none; }
+
+/* ---------- Picker ---------- */
+.picker-anchor { position: relative; min-width: 0; }
+.picker-row { display: flex; gap: var(--s-2); min-width: 0; }
+.picker-trigger {
+  flex: 1 1 auto; min-width: 0; min-height: 52px; display: flex; align-items: center; gap: 10px;
+  padding: 8px 14px; border: 1px solid var(--border-strong); border-radius: 14px;
+  background: var(--surface); font-size: 16px; text-align: start; color: var(--text);
+  transition: border-color .15s, box-shadow .15s;
+}
+.picker-trigger:hover { border-color: var(--cafe); }
+.picker-trigger[aria-expanded="true"] { border-color: var(--cafe); box-shadow: 0 0 0 3px rgba(166, 124, 91, .22); }
+.picker-trigger .lead { color: var(--cafe); }
+.picker-trigger .pv { flex: 1 1 auto; min-width: 0; overflow-wrap: anywhere; font-weight: 700; line-height: 1.45; }
+.picker-trigger.empty .pv { color: #9A8A7E; font-weight: 500; }
+.picker-trigger .chev { color: var(--muted); transition: transform .15s; }
+.picker-trigger[aria-expanded="true"] .chev { transform: rotate(180deg); }
+.icon-btn {
+  flex: none; width: var(--tap); min-height: var(--tap); border-radius: 14px;
+  border: 1px solid var(--border-strong); background: var(--surface); color: var(--muted);
+  display: grid; place-items: center; transition: background .15s, color .15s, border-color .15s;
+}
+.picker-row .icon-btn { min-height: 52px; }
+.icon-btn:hover { color: var(--danger); border-color: #E3BDB5; background: var(--danger-soft); }
+
+.sel-card {
+  display: grid; gap: 2px; padding: 10px 14px; border-radius: 14px;
+  background: var(--cafe-softer); border: 1px solid var(--border); font-size: 14px;
+}
+.sel-line { display: flex; gap: 8px; flex-wrap: wrap; min-width: 0; }
+.sel-line .k { color: var(--muted); min-width: 84px; }
+.sel-line .v { min-width: 0; overflow-wrap: anywhere; font-weight: 600; }
+.plate {
+  display: inline-block; padding: 0 10px; border-radius: 8px; border: 1.5px solid var(--brown);
+  background: #fff; font-weight: 800; letter-spacing: .5px; unicode-bidi: isolate; direction: rtl;
+  white-space: nowrap;
+}
+
+.pop {
+  position: absolute; top: calc(100% + 6px); inset-inline: 0; z-index: 40;
+  background: var(--card); border: 1px solid var(--border); border-radius: var(--r-lg);
+  box-shadow: var(--shadow-pop); padding: var(--s-3);
+  display: flex; flex-direction: column; max-height: min(430px, 62vh);
+}
+.pop.up { top: auto; bottom: calc(100% + 6px); }
+.pop-head { display: none; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 8px; }
+.pop-title { font-weight: 800; color: var(--brown); }
+.search-box { position: relative; min-width: 0; }
+.search-box > .i { position: absolute; inset-inline-start: 12px; top: 50%; transform: translateY(-50%); color: var(--muted); pointer-events: none; }
+.search-box .input { padding-inline-start: 42px; }
+.pop-count { font-size: 12.5px; color: var(--muted); padding: 8px 4px 4px; }
+.opt-list { list-style: none; margin: 0; padding: 0; overflow-y: auto; overscroll-behavior: contain; flex: 1 1 auto; min-height: 0; }
+.opt {
+  display: flex; align-items: center; gap: 10px; min-height: var(--tap); padding: 8px 10px;
+  border-radius: 12px; cursor: pointer; min-width: 0;
+}
+.opt:hover { background: var(--cafe-softer); }
+.opt.active { background: var(--cafe-soft); box-shadow: inset 0 0 0 1.5px var(--cafe); }
+.opt .check { width: 22px; color: var(--wa); visibility: hidden; }
+.opt[aria-selected="true"] .check { visibility: visible; }
+.opt[aria-selected="true"] .opt-name { color: var(--brown); }
+.opt-body { display: grid; min-width: 0; }
+.opt-name { font-weight: 700; overflow-wrap: anywhere; line-height: 1.45; }
+.opt-meta { font-size: 12.5px; color: var(--muted); display: flex; gap: 8px; flex-wrap: wrap; }
+.pop-empty { padding: 22px 8px; text-align: center; color: var(--muted); }
+.backdrop { position: fixed; inset: 0; background: rgba(53, 39, 31, .38); z-index: 35; }
+
+@media (max-width: 640px) {
+  .pop {
+    position: fixed; top: max(12px, env(safe-area-inset-top)); bottom: auto; inset-inline: 12px;
+    max-height: calc(100vh - 24px); max-height: calc(100dvh - 24px); z-index: 50; padding: var(--s-4);
+  }
+  .pop.up { bottom: auto; top: max(12px, env(safe-area-inset-top)); }
+  .pop-head { display: flex; }
+}
+
+/* ---------- Preview ---------- */
+.status {
+  display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700;
+  padding: 4px 12px; border-radius: 999px; background: var(--warn-soft); color: var(--warn);
+}
+.status.ready { background: var(--ok-soft); color: var(--ok); }
+.chat {
+  background: var(--chat-bg); border-radius: var(--r-lg); padding: var(--s-4);
+  min-height: 240px; display: flex; flex-direction: column; justify-content: flex-start;
+  background-image: radial-gradient(rgba(166, 124, 91, .10) 1px, transparent 1px);
+  background-size: 18px 18px;
+}
+.bubble {
+  align-self: flex-start; max-width: 100%; min-width: 0;
+  background: #FFFDFA; border-radius: 4px 16px 16px 16px; padding: 14px 16px 12px;
+  box-shadow: 0 1px 2px rgba(53, 39, 31, .12);
+  white-space: pre-wrap; overflow-wrap: anywhere; word-break: break-word;
+  unicode-bidi: plaintext; text-align: right; font-size: 15px; line-height: 1.75;
+  font-family: var(--font); color: #2B2019; margin: 0;
+  max-height: 62vh; overflow-y: auto;
+}
+.empty-preview {
+  margin: auto; text-align: center; color: var(--muted); max-width: 300px; padding: var(--s-6) var(--s-2);
+}
+.empty-preview .i { width: 56px; height: 56px; border-radius: 18px; background: var(--card); color: var(--cafe); margin: 0 auto var(--s-3); }
+.empty-preview .i svg { width: 28px; height: 28px; }
+.empty-preview strong { display: block; color: var(--brown); margin-bottom: 4px; font-size: 16px; }
+.note { font-size: 12.5px; color: var(--muted); margin: var(--s-3) 0 0; }
+.inline-warn {
+  margin-top: var(--s-3); padding: 10px 12px; border-radius: var(--r-md); background: var(--warn-soft);
+  color: #5E3D0C; font-size: 13.5px; display: flex; gap: 8px; align-items: flex-start;
+}
+.actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: var(--s-4); }
+@media (max-width: 400px) { .actions { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 959px) { .bubble { max-height: none; overflow: visible; } }
+.missing-note { text-align: center; margin-top: var(--s-3); }
+
+/* ---------- Buttons ---------- */
+.btn {
+  min-height: var(--tap); padding: 8px 18px; border-radius: 14px; border: 1px solid transparent;
+  font-weight: 700; font-size: 15px; display: inline-flex; align-items: center; justify-content: center;
+  gap: 8px; text-align: center; line-height: 1.35; transition: background .15s, border-color .15s, color .15s, transform .1s;
+}
+.btn:active:not(:disabled) { transform: translateY(1px); }
+.btn-primary { background: var(--brown); color: #FFF8F1; }
+.btn-primary:hover:not(:disabled) { background: var(--brown-hover); }
+.btn-wa { background: var(--wa); color: #fff; }
+.btn-wa:hover:not(:disabled) { background: var(--wa-hover); }
+.btn-ghost { background: var(--surface); border-color: var(--border-strong); color: var(--brown); }
+.btn-ghost:hover:not(:disabled) { border-color: var(--cafe); background: var(--cafe-softer); }
+.btn-danger { background: var(--danger); color: #fff; }
+.btn-danger:hover:not(:disabled) { background: #8B2F22; }
+.btn-danger-ghost { background: var(--surface); border-color: #E6C8C1; color: var(--danger); }
+.btn-danger-ghost:hover { background: var(--danger-soft); }
+.btn-sm { min-height: 44px; padding: 6px 14px; font-size: 14px; }
+.btn-block { width: 100%; margin-top: 10px; }
+.btn:disabled { opacity: .42; cursor: not-allowed; }
+
+/* ---------- Data management ---------- */
+.data-grid { display: grid; gap: var(--s-5); grid-template-columns: minmax(0, 1fr); align-items: start; }
+@media (min-width: 960px) {
+  .data-grid { grid-template-columns: minmax(0, 1fr) minmax(270px, 320px); gap: var(--s-6); }
+  .backup-card { position: sticky; top: var(--s-4); }
+}
+.seg { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; padding: 5px; background: #EFE5DA; border-radius: 16px; }
+@media (max-width: 600px) { .seg { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.seg-btn {
+  min-height: var(--tap); border: 0; border-radius: 12px; background: transparent; color: var(--muted);
+  font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 4px 8px; min-width: 0;
+}
+.seg-btn .cnt { font-size: 12px; padding: 0 8px; border-radius: 999px; background: rgba(75, 48, 37, .08); }
+.seg-btn[aria-pressed="true"] { background: var(--card); color: var(--brown); box-shadow: 0 1px 4px rgba(75, 48, 37, .14); }
+.toolbar { display: flex; gap: 10px; margin-top: var(--s-4); flex-wrap: wrap; }
+.toolbar .search-box { flex: 1 1 220px; }
+.toolbar .btn { flex: 0 0 auto; }
+@media (max-width: 420px) { .toolbar .btn { flex: 1 1 100%; } }
+.data-count { font-size: 13px; color: var(--muted); margin: var(--s-3) 0; }
+.rec-grid { display: grid; gap: var(--s-3); grid-template-columns: repeat(auto-fill, minmax(min(100%, 270px), 1fr)); }
+.rec {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg);
+  padding: 14px; display: flex; flex-direction: column; gap: 8px; min-width: 0;
+}
+.rec.is-selected { border-color: var(--cafe); box-shadow: inset 0 0 0 1px var(--cafe); }
+.rec-name { font-weight: 800; color: var(--text); overflow-wrap: anywhere; line-height: 1.45; }
+.rec-chip { align-self: flex-start; font-size: 11.5px; font-weight: 700; color: var(--brown); background: var(--cafe-soft); padding: 1px 9px; border-radius: 999px; }
+.rec-lines { display: grid; gap: 2px; font-size: 13.5px; }
+.rec-actions { display: flex; gap: 8px; margin-top: auto; padding-top: 4px; }
+.rec-actions .btn { flex: 1 1 0; }
+.empty-list { padding: var(--s-8) var(--s-4); text-align: center; color: var(--muted); border: 1px dashed var(--border-strong); border-radius: var(--r-lg); }
+
+.backup-card h2 { margin: 0 0 6px; }
+.backup-card p { margin: 0 0 var(--s-4); color: var(--muted); font-size: 14px; }
+.stack { display: grid; gap: 10px; }
+.help { margin-top: var(--s-4); border-top: 1px solid var(--border); padding-top: var(--s-3); font-size: 14px; }
+.help summary { cursor: pointer; font-weight: 700; color: var(--brown); min-height: 44px; display: flex; align-items: center; }
+.help ul { margin: 6px 0 0; padding-inline-start: 20px; color: var(--muted); display: grid; gap: 6px; }
+
+/* ---------- Dialogs ---------- */
+dialog {
+  border: 0; padding: 0; border-radius: var(--r-xl); background: var(--card); color: var(--text);
+  width: min(520px, calc(100vw - 24px)); max-height: calc(100vh - 24px); max-height: calc(100dvh - 24px);
+  box-shadow: var(--shadow-pop); overflow: auto;
+}
+dialog::backdrop { background: rgba(53, 39, 31, .45); }
+.dlg { padding: var(--s-5); display: grid; gap: var(--s-4); }
+@media (min-width: 600px) { .dlg { padding: var(--s-6); } }
+.dlg h2 { margin: 0; font-size: 19px; color: var(--brown); }
+.dlg p { margin: 0; }
+.dlg-actions { display: flex; gap: 10px; flex-wrap: wrap; justify-content: flex-start; }
+.dlg-actions .btn { flex: 1 1 140px; }
+.phone-row { display: flex; gap: 8px; }
+.phone-row .input { flex: 1 1 auto; min-width: 0; }
+.link-btn { background: none; border: 0; color: var(--brown); font-weight: 700; min-height: 44px; padding: 0 4px; display: inline-flex; align-items: center; gap: 6px; justify-self: start; }
+.link-btn:hover { color: var(--cafe); }
+.msg-box { border-radius: var(--r-md); padding: 10px 14px; font-size: 14px; }
+.msg-box ul { margin: 4px 0 0; padding-inline-start: 18px; }
+.msg-box.err { background: var(--danger-soft); color: #6E2219; }
+.msg-box.warn { background: var(--warn-soft); color: #5E3D0C; }
+.counts { width: 100%; border-collapse: collapse; font-size: 14px; }
+.counts th, .counts td { padding: 8px 6px; border-bottom: 1px solid var(--border); text-align: start; }
+.counts th { color: var(--muted); font-weight: 600; }
+.manual-text { min-height: 220px; font-size: 15px; unicode-bidi: plaintext; text-align: right; }
+
+/* ---------- Toast ---------- */
+.toast {
+  position: fixed; bottom: max(16px, env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%);
+  z-index: 200; max-width: calc(100vw - 32px); width: max-content;
+  background: #2E211A; color: #FFF8F1; border-radius: 14px; padding: 10px 12px 10px 16px;
+  box-shadow: var(--shadow-pop); display: flex; align-items: center; gap: 12px; font-size: 14px;
+}
+.toast .t-text { min-width: 0; }
+.toast .t-act { background: transparent; border: 1px solid rgba(255, 255, 255, .35); color: #FFE7CF; border-radius: 10px; min-height: 36px; padding: 0 12px; font-weight: 700; flex: none; }
+.toast.ok .t-ic { color: #7FD6A8; }
+
+.footer { text-align: center; color: var(--muted); font-size: 12.5px; padding: var(--s-8) 0 var(--s-6); display: grid; justify-items: center; gap: 6px; }
+.footer p { margin: 0; }
+.footer-logo { width: 60px; height: auto; opacity: .9; }
+.rights { font-size: 14px; font-weight: 700; color: var(--brown); }
+.rights bdi { font-weight: 800; letter-spacing: .3px; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; animation: none !important; scroll-behavior: auto !important; }
+}
+.card-title .badge-ic svg { width: 20px; height: 20px; }
+
+</style>
+</head>
+<body>
+<a class="skip" href="#main">تخطي للمحتوى</a>
+
+<header class="app-header">
+  <div class="wrap header-row">
+    <div class="brand">
+      <div class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11.2a8 8 0 0 1-11.6 7.1L4 19.5l1.3-4.1A8 8 0 1 1 20 11.2z"/><path d="M12 7.2c-1.9 0-3.3 1.4-3.3 3.1 0 2.2 3.3 5 3.3 5s3.3-2.8 3.3-5c0-1.7-1.4-3.1-3.3-3.1z"/><circle cx="12" cy="10.3" r=".9" fill="currentColor"/></svg>
+      </div>
+      <div>
+        <h1>منسق رسائل المواقع</h1>
+        <p class="subtitle">اختار البيانات، اكتب الأكشن، وانسخ رسالتك</p>
+      </div>
+    </div>
+    <div class="pill" id="storage-pill" role="status" data-state="ok"><span class="dot" aria-hidden="true"></span><span id="storage-text">جاري التحميل…</span></div>
+  </div>
+</header>
+
+<main id="main" class="wrap" tabindex="-1">
+  <div id="banner" class="banner" role="alert" hidden></div>
+
+  <div class="tabs" role="tablist" aria-label="أقسام البرنامج">
+    <button type="button" class="tab" role="tab" id="tab-compose" aria-controls="panel-compose" aria-selected="true" data-ic="message">تجهيز الرسالة</button>
+    <button type="button" class="tab" role="tab" id="tab-data" aria-controls="panel-data" aria-selected="false" tabindex="-1" data-ic="db">إدارة البيانات</button>
+  </div>
+
+  <!-- ===== تبويب تجهيز الرسالة ===== -->
+  <section id="panel-compose" role="tabpanel" aria-labelledby="tab-compose">
+    <div class="compose-grid">
+      <section class="card" aria-labelledby="compose-title">
+        <div class="card-head">
+          <h2 class="card-title" id="compose-title"><span class="badge-ic" data-ic="edit"></span>تجهيز الرسالة</h2>
+          <button type="button" id="btn-clear" class="btn btn-ghost btn-sm" data-ic="reset">مسح الاختيارات</button>
+        </div>
+        <div class="fields">
+          <div id="mount-site"></div>
+          <div class="people-group" role="group" aria-labelledby="people-label">
+            <p class="group-label" id="people-label">فريق العمل — كل اختيار اختياري، اختار اللي محتاجه بس</p>
+            <div id="mount-people" class="fields"></div>
+          </div>
+          <div class="field">
+            <label class="label" for="action">الأكشن <span class="tag">مطلوب</span></label>
+            <textarea id="action" class="textarea" rows="5" placeholder="اكتب تفاصيل الشغل المطلوب…" aria-describedby="action-hint"></textarea>
+            <p class="hint" id="action-hint"></p>
+          </div>
+        </div>
+      </section>
+
+      <section class="card preview-card" aria-labelledby="preview-title">
+        <div class="card-head">
+          <h2 class="card-title" id="preview-title"><span class="badge-ic" data-ic="eye"></span>معاينة الرسالة</h2>
+          <span id="msg-status" class="status" aria-live="polite"></span>
+        </div>
+        <div class="chat">
+          <div id="empty-preview" class="empty-preview">
+            <span class="i" data-ic="message"></span>
+            <strong>الرسالة هتظهر هنا</strong>
+            اختار الموقع ومين من الفريق، واكتب الأكشن — وهتشوف النص النهائي وهو بيتكون.
+          </div>
+          <pre id="bubble" class="bubble" dir="rtl" aria-label="نص الرسالة" hidden></pre>
+        </div>
+        <p class="note">ده النص بالظبط اللي هيتنسخ ويتبعت. النجمة * حوالين العنوان بتخليه عريض في واتساب، وألوان البرنامج مش بتنتقل للرسالة.</p>
+        <div id="long-warn" class="inline-warn" hidden><span data-ic="alert"></span><span>الرسالة طويلة. لو واتساب ما عرضهاش كاملة، استخدم «نسخ الرسالة» والصقها في المحادثة.</span></div>
+        <div class="actions">
+          <button type="button" id="btn-copy" class="btn btn-primary" data-ic="copy" disabled>نسخ الرسالة</button>
+          <button type="button" id="btn-wa" class="btn btn-wa" data-ic="wa" disabled>مشاركة واتساب</button>
+        </div>
+        <button type="button" id="btn-share" class="btn btn-ghost btn-block" data-ic="share" disabled hidden>مشاركة عبر الجهاز</button>
+        <p id="missing-note" class="hint need missing-note"></p>
+      </section>
+    </div>
+  </section>
+
+  <!-- ===== تبويب إدارة البيانات ===== -->
+  <section id="panel-data" role="tabpanel" aria-labelledby="tab-data" hidden>
+    <div class="data-grid">
+      <section class="card" aria-labelledby="data-title">
+        <div class="card-head">
+          <h2 class="card-title" id="data-title"><span class="badge-ic" data-ic="db"></span>إدارة البيانات</h2>
+        </div>
+        <div class="seg" id="seg" role="group" aria-label="نوع البيانات"></div>
+        <div class="toolbar">
+          <div class="search-box">
+            <span class="i" data-ic="search"></span>
+            <label class="sr-only" for="data-search">بحث في البيانات</label>
+            <input id="data-search" type="search" class="input" autocomplete="off" spellcheck="false">
+          </div>
+          <button type="button" id="btn-add" class="btn btn-primary" data-ic="plus">إضافة</button>
+        </div>
+        <p id="data-count" class="data-count" aria-live="polite"></p>
+        <div id="rec-grid" class="rec-grid"></div>
+        <div id="rec-empty" class="empty-list" hidden></div>
+      </section>
+
+      <aside class="card backup-card" aria-labelledby="backup-title">
+        <h2 class="card-title" id="backup-title"><span class="badge-ic" data-ic="shield"></span>النسخة الاحتياطية</h2>
+        <p style="margin-top:10px">البيانات محفوظة في المتصفح ده بس. صدّر نسخة احتياطية عشان تحتفظ بيها أو تنقلها لجهاز أو متصفح تاني.</p>
+        <div class="stack">
+          <button type="button" id="btn-export" class="btn btn-primary" data-ic="download">تصدير نسخة احتياطية</button>
+          <button type="button" id="btn-import" class="btn btn-ghost" data-ic="upload">استيراد نسخة احتياطية</button>
+          <input type="file" id="file-import" accept=".json,application/json" hidden>
+        </div>
+        <details class="help">
+          <summary>إزاي البيانات بتتحفظ؟</summary>
+          <ul>
+            <li>أي إضافة أو تعديل أو حذف بيتحفظ تلقائيًا في نفس المتصفح على نفس الجهاز.</li>
+            <li>نقل ملف البرنامج لوحده لجهاز تاني <b>مش</b> بينقل تعديلاتك. انقلها بملف النسخة الاحتياطية.</li>
+            <li>الاستيراد بيستبدل كل البيانات الحالية بالكامل، وبيتأكد من الملف قبل أي تغيير.</li>
+            <li>مسح بيانات المتصفح (Cache/Cookies) ممكن يمسح التعديلات، فخلي عندك نسخة احتياطية حديثة.</li>
+          </ul>
+        </details>
+      </aside>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <img class="footer-logo" src="data:image/png;base64,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" alt="شعار Wolverine Group" width="60" height="53">
+    <p class="rights">جميع الحقوق محفوظة لـ <bdi dir="ltr">Wolverine Group</bdi> ©</p>
+    <p class="footer-note">يعمل بدون إنترنت · البيانات لا تُرسل لأي خادم · المشاركة بتبعت نص الرسالة بس لواتساب</p>
+  </footer>
+</main>
+
+<div id="backdrop" class="backdrop" hidden></div>
+<div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+<!-- نافذة الإضافة والتعديل -->
+<dialog id="dlg-form" aria-labelledby="form-title">
+  <form id="form" class="dlg" novalidate>
+    <h2 id="form-title"></h2>
+    <div id="form-fields" class="fields" style="gap:16px"></div>
+    <div id="form-msg" hidden></div>
+    <div class="dlg-actions">
+      <button type="submit" id="form-save" class="btn btn-primary">حفظ</button>
+      <button type="button" id="form-cancel" class="btn btn-ghost">إلغاء</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- نافذة التأكيد -->
+<dialog id="dlg-confirm" aria-labelledby="confirm-title">
+  <div class="dlg">
+    <h2 id="confirm-title"></h2>
+    <div id="confirm-body"></div>
+    <div class="dlg-actions">
+      <button type="button" id="confirm-ok" class="btn btn-danger"></button>
+      <button type="button" id="confirm-cancel" class="btn btn-ghost">إلغاء</button>
+    </div>
+  </div>
+</dialog>
+
+<!-- نافذة النسخ اليدوي -->
+<dialog id="dlg-manual" aria-labelledby="manual-title">
+  <div class="dlg">
+    <h2 id="manual-title">انسخ الرسالة يدويًا</h2>
+    <p class="hint" style="font-size:14px">المتصفح منع النسخ التلقائي. النص متحدد تحت: اضغط Ctrl+C (أو ⌘+C)، وعلى الموبايل اضغط مطولًا واختار «نسخ».</p>
+    <label class="sr-only" for="manual-text">نص الرسالة</label>
+    <textarea id="manual-text" class="textarea manual-text" readonly dir="rtl"></textarea>
+    <div class="dlg-actions">
+      <button type="button" id="manual-close" class="btn btn-ghost">إغلاق</button>
+    </div>
+  </div>
+</dialog>
+
+<script>
+(function () {
+  'use strict';
+
+  /* =========================================================
+     الثوابت والبيانات الأولية
+     ========================================================= */
+  const SEED = {"sites":[{"id":"site-1","name":"FTE DAMANOUR 8 0816DE / 8600"},{"id":"site-2","name":"MOHAFZA-ST 3648DE"},{"id":"site-3","name":"BTECH 1104DE"},{"id":"site-4","name":"DAMANHUR 2 0015DE"},{"id":"site-5","name":"DMNHR-SHP 1010DE"},{"id":"site-6","name":"DAMANHUR 6 0019DE"},{"id":"site-7","name":"ABDALLA-MSQ 0892DE"},{"id":"site-8","name":"DAMANHUR3 0016DE"},{"id":"site-9","name":"EZ UMRAN NODAL + DISNS-DINAR 8009DE 0035DE"},{"id":"site-10","name":"DANONE-EL-BEHIRA 7166DE"},{"id":"site-11","name":"DAMANHUR 1 0014DE"},{"id":"site-12","name":"DAMANHUR-5 0018DE"},{"id":"site-13","name":"DAMNHOR-NTH 0890DE"},{"id":"site-14","name":"MAWAZEEN-ST 3092DE"},{"id":"site-15","name":"BAHEY 3477DE"},{"id":"site-16","name":"SANTIS 3716DE"},{"id":"site-17","name":"KFR-HELAL 4065DE"},{"id":"site-18","name":"DMNHR-OUF 4377DE"},{"id":"site-19","name":"IZBT-SAAD 3091DE"},{"id":"site-20","name":"IBRAHEMEYA 4054DE"},{"id":"site-21","name":"TRABANIA 4053DE"},{"id":"site-22","name":"RAWQA 0520DE"},{"id":"site-23","name":"SEMMANY 3298DE"},{"id":"site-24","name":"QARAQIS 0657DE"},{"id":"site-25","name":"FLAKA 3297DE"},{"id":"site-26","name":"BATTAT-ST 3090DE"},{"id":"site-27","name":"SHARNUB 0651DE"},{"id":"site-28","name":"YOSIF-KAMAL 3884DE"},{"id":"site-29","name":"KFR-SABY 4006DE"},{"id":"site-30","name":"MAHALT-QAYS 3260DE"},{"id":"site-31","name":"KFR-QASHASH 0545DE"},{"id":"site-32","name":"SAFT-HOREYA 3479DE"},{"id":"site-33","name":"UREIN 3395DE"},{"id":"site-34","name":"SHOBRA-RIS 4360DE"},{"id":"site-35","name":"ABO-REESH 3064DE"},{"id":"site-36","name":"DMNHR-SHBRA 3035DE"},{"id":"site-37","name":"DAMNHOR-ENT 0863DE"},{"id":"site-38","name":"SAFASIF 3593DE"},{"id":"site-39","name":"BASTARA 4362DE"},{"id":"site-40","name":"DAR-WAFA 0034DE"},{"id":"site-41","name":"DEFRAWY 3089DE"},{"id":"site-42","name":"DMNHR-UNIV 4737DE"},{"id":"site-43","name":"DAMNHR-BRDGS 4376DE"},{"id":"site-44","name":"SHOKA 3715DE"},{"id":"site-45","name":"DAMANHUR4 0017DE"},{"id":"site-46","name":"DMNHR-ENT-1 4303DE"},{"id":"site-47","name":"NADEBA 0652DE"},{"id":"site-48","name":"HAFS 4024DE"},{"id":"site-49","name":"BARNOGI 3617DE"},{"id":"site-50","name":"HARARA 3618DE"},{"id":"site-51","name":"ABQAEEN 4021DE"},{"id":"site-52","name":"HAWSH ISA 2 3691DE"},{"id":"site-53","name":"MNSHYT-KHYT 0658DE"},{"id":"site-54","name":"HAWSH ISA 3 4368DE"},{"id":"site-55","name":"HAWSH ISA 4 4393DE"},{"id":"site-56","name":"HAWSH ISA 5 4405DE"},{"id":"site-57","name":"ROZIMAT 4001DE"},{"id":"site-58","name":"SORYAN 3343DE"},{"id":"site-59","name":"GHAZEL 0521DE"},{"id":"site-60","name":"MAHMUDUIYA 0284DE"},{"id":"site-61","name":"FARANSAWIA 3981DE"},{"id":"site-62","name":"GHAZALA-VLG 3385DE"},{"id":"site-63","name":"ZHOR-MHMDYA 0491DE"},{"id":"site-64","name":"MHMDIA-NRTH 4422DE"},{"id":"site-65","name":"FUWWAH 0249DE"},{"id":"site-66","name":"MNSHAT-HMOR 3681DE"},{"id":"site-67","name":"EZB-BSNTWI2 4170DE"},{"id":"site-68","name":"MAHMOUDIA-2 3363DE"},{"id":"site-69","name":"MHMDIA-CNTR 3417DE"},{"id":"site-70","name":"DAIRUT 3515DE"},{"id":"site-71","name":"QIBRIT 3546DE"},{"id":"site-72","name":"AREEMON 3282DE"},{"id":"site-73","name":"DASYA 3901DE"},{"id":"site-74","name":"FISHA 3870DE"},{"id":"site-75","name":"STH MUTOBUS 0859DE"},{"id":"site-76","name":"SIDI-UQBA 3538DE"},{"id":"site-77","name":"DAMANHUR 7 0359DE"},{"id":"site-78","name":"SANHOURE 0824DE"},{"id":"site-79","name":"ABU-DURRA 3873DE"},{"id":"site-80","name":"MAGD 3524DE"},{"id":"site-81","name":"BAWIT 3900DE"},{"id":"site-82","name":"MANSH-AWQAF 4182DE"},{"id":"site-83","name":"ABU-KHARASH 3871DE"},{"id":"site-84","name":"MHLT-BESHR 4022DE"},{"id":"site-85","name":"KHAZAN 0406DE"},{"id":"site-86","name":"DISUQ-ENT2 4247DE"},{"id":"site-87","name":"SAFIYA 3545DE"},{"id":"site-88","name":"SHUBRA KHIT 0299DE"},{"id":"site-89","name":"NTGS-SBRK 5051DE"},{"id":"site-90","name":"RAHMANIA 3445DE"},{"id":"site-91","name":"FTE ITAY EL BAROUD 0294DE"},{"id":"site-92","name":"SHANDID 3464DE"},{"id":"site-93","name":"ANAAM 3259DE"},{"id":"site-94","name":"NIKLA-AINAB 0583DE"},{"id":"site-95","name":"ISMANYA 3802DE"},{"id":"site-96","name":"MHLT-SA 4013DE"},{"id":"site-97","name":"SHBRKHIT-4 4764DE"},{"id":"site-98","name":"SAFT-KHALED 3394DE"},{"id":"site-99","name":"SHUBRA-NUNA 0048DE"},{"id":"site-100","name":"NABIRA 3714DE"},{"id":"site-101","name":"AMLIT 3081DE"},{"id":"site-102","name":"ITAY-BAROUD-3 4546DE"},{"id":"site-103","name":"ELOYOUN 3280DE"},{"id":"site-104","name":"DILNGAT-WST 3416DE"},{"id":"site-105","name":"ABO-SHIQAF 3368DE"},{"id":"site-106","name":"ZOMRAN NAKHL 3652DE"},{"id":"site-107","name":"DARSHAY 3893DE"},{"id":"site-108","name":"BUSTAN 0582DE"},{"id":"site-109","name":"SHABAB 0453DE"},{"id":"site-110","name":"EMAM-ALI 3694DE"},{"id":"site-111","name":"HGR-MHROQ 3573DE"},{"id":"site-112","name":"KHALILIYA 4131DE"},{"id":"site-113","name":"ZWIT-HUMOR 3892DE"},{"id":"site-114","name":"TIBA 3571DE"},{"id":"site-115","name":"QAMHA 3712DE"},{"id":"site-116","name":"BUSTAN-6OCT 3935DE"},{"id":"site-117","name":"ABYA-HAMRA 3887DE"},{"id":"site-118","name":"GABARES 3896DE"},{"id":"site-119","name":"FTE KOMHMDA-STH 0281DE"},{"id":"site-120","name":"KOMHMDA-NTH 0280DE"},{"id":"site-121","name":"TAWD 0575DE"},{"id":"site-122","name":"DAST-ASHRAF 4023DE"},{"id":"site-123","name":"QILISHAN 0044DE"},{"id":"site-124","name":"HADIN 3590DE"},{"id":"site-125","name":"BALAKOS 4575DE"},{"id":"site-126","name":"KHIRBITA 3222DE"},{"id":"site-127","name":"KFR-ZYADA 3895DE"},{"id":"site-128","name":"WAFAIYYA 0576DE"},{"id":"site-129","name":"QUBORUMARA 3894DE"},{"id":"site-130","name":"FTE DILINGAT 0282DE"},{"id":"site-131","name":"FTE HAWSH-ISA 0298DE"},{"id":"site-132","name":"RAHMANYA 2 4600DE"},{"id":"site-133","name":"SHALTOT 4069DE"},{"id":"site-134","name":"KFR MUSTNAB 3520DE"},{"id":"site-135","name":"KOM-HAMADA 3 3057DE"},{"id":"site-136","name":"SAFT-ELENAB 3497DE"},{"id":"site-137","name":"SOTOMIA 4070DE"},{"id":"site-138","name":"ZUBAYDA 3898DE"},{"id":"site-139","name":"MAANIA 3478DE"},{"id":"site-140","name":"ITAY-BAROUD-5 4766DE"},{"id":"site-141","name":"DAMANHUR-9 4762DE"},{"id":"site-142","name":"SUMUKHRAT 3518DE"},{"id":"site-143","name":"HK-NSAR 0G61DE"},{"id":"site-144","name":"DAMANHUR-12 0H34DE"},{"id":"site-145","name":"HK-ZHRH-QBL 0G49DE"},{"id":"site-146","name":"MHMDIA-3 4908DE"},{"id":"site-147","name":"HEDERY-VLG 0D22DE"},{"id":"site-148","name":"DAMANHUR-11 4761DE"},{"id":"site-149","name":"HK-ZRQWN 0G15DE"},{"id":"site-150","name":"MESEEN-VLG 3317DE"},{"id":"site-151","name":"HK-GHZAL 0F98DE"},{"id":"site-152","name":"HK-SHASHAAA 0G14DE"},{"id":"site-153","name":"HK-BSTRH 0G16DE"}],"engineers":[{"id":"engineer-1","name":"احمد خميس الديب","nationalId":"29611161801851","phones":["01289172637"]},{"id":"engineer-2","name":"احمد ناجي البنا","nationalId":"29504061801453","phones":["01202135003"]},{"id":"engineer-3","name":"عبدالله مهني محمد ابراهيم","nationalId":"30003151800894","phones":["01202936319"]},{"id":"engineer-4","name":"اسلام السيد محمد عمر","nationalId":"29709211803698","phones":["01226609962"]}],"technicians":[{"id":"technician-1","name":"محمد فوزى على حسن الشيخ","nationalId":"27006201802792","phones":["01279555325"]},{"id":"technician-2","name":"عمرو فايز محمد حبيب","nationalId":"28909301800774","phones":["01228222339"]},{"id":"technician-3","name":"كريم جابر محمد عبد المقصود","nationalId":"27803201802871","phones":["01278721246"]},{"id":"technician-4","name":"محمود عبد السلام بسيوني سعد","nationalId":"29101011843239","phones":["01143135557","01279550644"]},{"id":"technician-5","name":"محمد صبحى محمود محمد فرج الله","nationalId":"29501011825018","phones":["01278715476"]},{"id":"technician-6","name":"محمد احمد محمد ابوهلال","nationalId":"29406011801191","phones":["01203354210"]},{"id":"technician-7","name":"ابراهيم محمد على جمده","nationalId":"27402171800237","phones":["01279752266"]},{"id":"technician-8","name":"محمد السعيد سعد القصبي","nationalId":"29004151800534","phones":["01280292985"]},{"id":"technician-9","name":"محمد عبدالرؤوف قشطه","nationalId":"27707061801691","phones":["01283996668"]},{"id":"technician-10","name":"محمود عاطف عبدالرازق","nationalId":"29309201804396","phones":["01288034429"]},{"id":"technician-11","name":"محمود محمود رمضان عطيه","nationalId":"29011101800271","phones":["01285236236"]},{"id":"technician-12","name":"احمد محمود مبروك نايل","nationalId":"29409011805536","phones":["01125621242"]},{"id":"technician-13","name":"مصطفى أنور صلاح سعد إبراهيم الكشيف","nationalId":"30201011856772","phones":["01033466306"]}],"drivers":[{"id":"driver-1","name":"محمد رمضان عبد الهادي","nationalId":"29409041801934","phones":["01101280141"],"vehicleNumber":"ف ر ل 4572"},{"id":"driver-2","name":"محمد حامد رحومه ابراهيم","nationalId":"28009251802559","phones":["01154785269"],"vehicleNumber":"ط ف ر 4124"},{"id":"driver-3","name":"شعبان عبد الرحمن إبراهيم عبد الوهاب","nationalId":"28507151804511","phones":["01101420606"],"vehicleNumber":"ب ط ر 4187"},{"id":"driver-4","name":"محمود وجية عبد الجليل إبراهيم","nationalId":"29610101803416","phones":["01157070495"],"vehicleNumber":"ج س أ 273"},{"id":"driver-5","name":"مهدي جبالي عبد القوي جبالي","nationalId":"28309281802255","phones":["01149229149"],"vehicleNumber":"ب ن و 7862"},{"id":"driver-6","name":"احمد عبد السلام بسيوني","nationalId":"30404141801919","phones":["01110709315"],"vehicleNumber":"س ع ع 9435"}]};
+  const APP_ID = 'site-message-composer';
+  const DATA_KEY = 'siteMessageComposer:data';
+  const DRAFT_KEY = 'siteMessageComposer:draft';
+  const SCHEMA_VERSION = 1;
+  const SEP = '────────────────';
+  const SECTION_JOIN = '\n\n' + SEP + '\n\n';
+  const WA_LONG_URL = 6000;
+  const CAT_KEYS = ['sites', 'engineers', 'technicians', 'drivers'];
+  const PEOPLE = ['engineers', 'technicians', 'drivers'];
+
+  const CATS = {
+    sites: {
+      plural: 'المواقع', single: 'موقع', title: 'الموقع', emoji: '📍', icon: 'pin',
+      placeholder: 'اختار الموقع…', search: 'ابحث باسم الموقع أو جزء من الكود', idPrefix: 'site'
+    },
+    engineers: {
+      plural: 'المهندسين', single: 'مهندس', title: 'المهندس', emoji: '👷', icon: 'helmet',
+      placeholder: 'اختار مهندس', search: 'ابحث بالاسم أو الهاتف أو الهوية', idPrefix: 'engineer'
+    },
+    technicians: {
+      plural: 'الفنيين', single: 'فني', title: 'الفني', emoji: '🔧', icon: 'wrench',
+      placeholder: 'اختار فني', search: 'ابحث بالاسم أو الهاتف أو الهوية', idPrefix: 'technician'
+    },
+    drivers: {
+      plural: 'السائقين', single: 'سائق', title: 'السائق', emoji: '🚗', icon: 'car',
+      placeholder: 'اختار سائق', search: 'ابحث بالاسم أو الهاتف أو الهوية أو رقم السيارة', idPrefix: 'driver'
+    }
+  };
+
+  /* أيقونات SVG ثابتة (محتوى موثوق — لا يحتوي بيانات مستخدم) */
+  const P = {
+    pin: '<path d="M12 21s-7-6.2-7-12a7 7 0 0 1 14 0c0 5.8-7 12-7 12z"/><circle cx="12" cy="9" r="2.5"/>',
+    helmet: '<path d="M3.5 17.5h17"/><path d="M5 17.5V15a7 7 0 0 1 14 0v2.5"/><path d="M10 9V6h4v3"/>',
+    wrench: '<path d="M14.6 6.4a4 4 0 0 0-5.3 5.3L3.5 17.5l3 3 5.8-5.8a4 4 0 0 0 5.3-5.3l-2.5 2.5-2.6-.4-.4-2.6z"/>',
+    car: '<path d="M4 16.5V13l2-5h12l2 5v3.5z"/><path d="M4 13h16"/><path d="M6.5 16.5V19M17.5 16.5V19"/><path d="M7.5 10.2h.01M16.5 10.2h.01"/>',
+    copy: '<rect x="9" y="9" width="11" height="11" rx="2.5"/><path d="M5 15V6.5A2.5 2.5 0 0 1 7.5 4H15"/>',
+    wa: '<path d="M20 11.5a8 8 0 0 1-11.7 7.1L4 20l1.4-4.1A8 8 0 1 1 20 11.5z"/><path d="M9.2 8.8c0 3 2.6 5.8 5.8 5.9l.9-1.3-1.7-.9-.8.7c-1-.4-2-1.4-2.4-2.4l.7-.8-.9-1.7z"/>',
+    share: '<circle cx="18" cy="5.5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="18.5" r="2.5"/><path d="M8.2 10.8l7.6-4.1M8.2 13.2l7.6 4.1"/>',
+    search: '<circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4.2-4.2"/>',
+    chev: '<path d="M6 9.5l6 6 6-6"/>',
+    x: '<path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/>',
+    check: '<path d="M5 12.5l4.5 4.5L19 7.5"/>',
+    plus: '<path d="M12 5v14M5 12h14"/>',
+    edit: '<path d="M4 20h4.2L19 9.2 14.8 5 4 15.8z"/><path d="M13 6.8l4.2 4.2"/>',
+    trash: '<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>',
+    download: '<path d="M12 4v11M7.5 10.5L12 15l4.5-4.5M5 20h14"/>',
+    upload: '<path d="M12 15V4M7.5 8.5L12 4l4.5 4.5M5 20h14"/>',
+    message: '<path d="M20 11.5a8 8 0 0 1-11.7 7.1L4 20l1.4-4.1A8 8 0 1 1 20 11.5z"/><path d="M8.5 10h7M8.5 13.5h4.5"/>',
+    db: '<ellipse cx="12" cy="6" rx="7" ry="3"/><path d="M5 6v12c0 1.7 3.1 3 7 3s7-1.3 7-3V6"/><path d="M5 12c0 1.7 3.1 3 7 3s7-1.3 7-3"/>',
+    eye: '<path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="2.8"/>',
+    reset: '<path d="M4.5 12a7.5 7.5 0 1 0 2.2-5.3"/><path d="M4.5 4.5v4h4"/>',
+    alert: '<path d="M12 3.5l9 16H3z"/><path d="M12 10v4M12 17h.01"/>',
+    shield: '<path d="M12 3l7 3v5.5c0 4.4-3 8-7 9.5-4-1.5-7-5.1-7-9.5V6z"/><path d="M9 12l2 2 4-4"/>',
+    users: '<circle cx="9" cy="8" r="3.2"/><path d="M3.5 19.5a5.5 5.5 0 0 1 11 0"/><path d="M15.5 5.2a3.2 3.2 0 0 1 0 5.6M17.5 14.5a5.5 5.5 0 0 1 3 5"/>',
+    phone: '<path d="M5 4h4l1.5 4.5-2.3 1.4a11 11 0 0 0 6 6l1.4-2.3L20 15v4a1.5 1.5 0 0 1-1.6 1.5A16.5 16.5 0 0 1 3.5 5.6 1.5 1.5 0 0 1 5 4z"/>'
+  };
+  function svg(name) {
+    return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">' + (P[name] || '') + '</svg>';
+  }
+  function icon(name, cls) {
+    const s = document.createElement('span');
+    s.className = 'i' + (cls ? ' ' + cls : '');
+    s.setAttribute('aria-hidden', 'true');
+    s.innerHTML = svg(name); // ثابت وموثوق
+    return s;
+  }
+
+  /* =========================================================
+     أدوات DOM آمنة (بيانات المستخدم دايمًا textContent)
+     ========================================================= */
+  function h(tag, attrs) {
+    const e = document.createElement(tag);
+    if (attrs) {
+      for (const k of Object.keys(attrs)) {
+        const v = attrs[k];
+        if (v === null || v === undefined || v === false) continue;
+        if (k === 'class') e.className = v;
+        else if (k === 'text') e.textContent = v;
+        else if (k.slice(0, 2) === 'on' && typeof v === 'function') e.addEventListener(k.slice(2), v);
+        else if (v === true) e.setAttribute(k, '');
+        else e.setAttribute(k, String(v));
+      }
+    }
+    for (let i = 2; i < arguments.length; i++) appendKid(e, arguments[i]);
+    return e;
+  }
+  function appendKid(e, c) {
+    if (c === null || c === undefined || c === false) return;
+    if (Array.isArray(c)) { c.forEach(x => appendKid(e, x)); return; }
+    e.append(c instanceof Node ? c : document.createTextNode(String(c)));
+  }
+  const $ = id => document.getElementById(id);
+  const isObj = v => v !== null && typeof v === 'object' && !Array.isArray(v);
+  const clone = v => JSON.parse(JSON.stringify(v));
+
+  /* =========================================================
+     تطبيع النص (للبحث فقط — لا يغيّر المحفوظ أو المعروض)
+     ========================================================= */
+  function toLatinDigits(s) {
+    return String(s)
+      .replace(/[٠-٩]/g, d => String(d.charCodeAt(0) - 0x0660))
+      .replace(/[۰-۹]/g, d => String(d.charCodeAt(0) - 0x06F0));
+  }
+  function norm(s) {
+    return toLatinDigits(String(s == null ? '' : s))
+      .toLowerCase()
+      .replace(/[ً-ٰٟۖ-ۭ]/g, '') // التشكيل
+      .replace(/ـ/g, '')                            // التطويل
+      .replace(/[أإآٱ]/g, 'ا')
+      .replace(/ى/g, 'ي')
+      .replace(/ؤ/g, 'و')
+      .replace(/ئ/g, 'ي')
+      .replace(/ة/g, 'ه')
+      .replace(/[_\-\/.,+]/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+  }
+  function matches(hay, query) {
+    const q = norm(query);
+    if (!q) return true;
+    const hn = norm(hay);
+    if (hn.includes(q)) return true;
+    const hs = hn.replace(/ /g, ''), qs = q.replace(/ /g, '');
+    if (qs && hs.includes(qs)) return true;
+    return q.split(' ').every(t => hn.includes(t) || hs.includes(t));
+  }
+  function haystack(cat, r) {
+    if (cat === 'sites') return r.name;
+    return [r.name, (r.phones || []).join(' '), r.nationalId || '', r.vehicleNumber || ''].join(' | ');
+  }
+  const siteKey = name => String(name).trim().replace(/\s+/g, ' ').toLowerCase();
+
+  /* =========================================================
+     صياغة الرسالة — المصدر الوحيد للمعاينة والنسخ والمشاركة
+     ========================================================= */
+  function clean(v) { return typeof v === 'string' ? v.trim() : ''; }
+  function normalizeAction(text) {
+    return String(text || '')
+      .replace(/\r\n?/g, '\n')
+      .replace(/^(?:[ \t]*\n)+/, '')
+      .replace(/\s+$/, '');
+  }
+  function personSection(cat, p) {
+    const c = CATS[cat];
+    const lines = [c.emoji + ' *' + c.title + '*'];
+    if (clean(p.name)) lines.push('الاسم: ' + clean(p.name));
+    (Array.isArray(p.phones) ? p.phones : []).map(clean).filter(Boolean)
+      .forEach((ph, i) => lines.push((i === 0 ? 'الهاتف: ' : 'هاتف إضافي: ') + ph));
+    if (clean(p.nationalId)) lines.push('رقم الهوية: ' + clean(p.nationalId));
+    if (cat === 'drivers' && clean(p.vehicleNumber)) lines.push('رقم السيارة: ' + clean(p.vehicleNumber));
+    return lines.join('\n');
+  }
+  function buildMessage(s) {
+    const sections = [];
+    if (s.site && clean(s.site.name)) sections.push('📍 *الموقع*\n' + clean(s.site.name));
+    if (s.engineer) sections.push(personSection('engineers', s.engineer));
+    if (s.technician) sections.push(personSection('technicians', s.technician));
+    if (s.driver) sections.push(personSection('drivers', s.driver));
+    const act = normalizeAction(s.action);
+    if (act.trim()) sections.push('🛠️ *الأكشن*\n' + act);
+    return sections.join(SECTION_JOIN);
+  }
+
+  /* =========================================================
+     الحالة
+     ========================================================= */
+  let db = { sites: [], engineers: [], technicians: [], drivers: [] };
+  const sel = { sites: null, engineers: null, technicians: null, drivers: null };
+  let actionText = '';
+  let storageMode = 'ok'; // ok | unavailable | corrupt | error
+  let corruptRaw = null;
+  let draftWritable = true;
+
+  const find = (cat, id) => (id ? db[cat].find(r => r.id === id) || null : null);
+  function getSelection() {
+    return {
+      site: find('sites', sel.sites),
+      engineer: find('engineers', sel.engineers),
+      technician: find('technicians', sel.technicians),
+      driver: find('drivers', sel.drivers),
+      action: actionText
+    };
+  }
+  function getMessage() { return buildMessage(getSelection()); }
+  function missingParts() {
+    const m = [];
+    if (!find('sites', sel.sites)) m.push('الموقع');
+    if (!normalizeAction(actionText).trim()) m.push('الأكشن');
+    return m;
+  }
+
+  /* =========================================================
+     التحقق من البيانات (للتحميل والاستيراد)
+     ========================================================= */
+  function validateData(d) {
+    const errors = [];
+    const out = { sites: [], engineers: [], technicians: [], drivers: [] };
+    if (!isObj(d)) return { ok: false, errors: ['قسم البيانات (data) مفقود أو غير صالح.'], data: null };
+    for (const cat of CAT_KEYS) {
+      const label = CATS[cat].plural;
+      const arr = d[cat];
+      if (!Array.isArray(arr)) { errors.push('قائمة ' + label + ' مفقودة أو ليست قائمة.'); continue; }
+      const ids = new Set(), keys = new Map();
+      arr.forEach((r, i) => {
+        const where = label + ' — السجل رقم ' + (i + 1);
+        if (!isObj(r)) { errors.push(where + ': ليس سجلًا صالحًا.'); return; }
+        if (typeof r.id !== 'string' || !r.id.trim()) { errors.push(where + ': المعرّف id مفقود.'); return; }
+        if (ids.has(r.id)) errors.push(where + ': المعرّف «' + r.id + '» مكرر.');
+        ids.add(r.id);
+        if (typeof r.name !== 'string' || !r.name.trim()) { errors.push(where + ': الاسم مفقود.'); return; }
+        if (cat === 'sites') {
+          const k = siteKey(r.name);
+          if (keys.has(k)) errors.push(where + ': اسم الموقع «' + r.name + '» مكرر.');
+          keys.set(k, true);
+          out.sites.push({ id: r.id, name: r.name });
+          return;
+        }
+        if (typeof r.nationalId !== 'string') errors.push(where + ': رقم الهوية لازم يكون نص.');
+        if (!Array.isArray(r.phones) || r.phones.some(p => typeof p !== 'string')) errors.push(where + ': الهواتف لازم تكون قائمة نصوص.');
+        if (cat === 'drivers' && typeof r.vehicleNumber !== 'string') errors.push(where + ': رقم السيارة لازم يكون نص.');
+        const nid = typeof r.nationalId === 'string' ? r.nationalId.trim() : '';
+        if (nid) {
+          if (keys.has(nid)) errors.push(where + ': رقم الهوية ' + nid + ' مكرر في ' + label + '.');
+          keys.set(nid, true);
+        }
+        const rec = {
+          id: r.id, name: r.name,
+          nationalId: typeof r.nationalId === 'string' ? r.nationalId : '',
+          phones: Array.isArray(r.phones) ? r.phones.filter(p => typeof p === 'string') : []
+        };
+        if (cat === 'drivers') rec.vehicleNumber = typeof r.vehicleNumber === 'string' ? r.vehicleNumber : '';
+        out[cat].push(rec);
+      });
+    }
+    return { ok: errors.length === 0, errors, data: errors.length ? null : out };
+  }
+
+  function validateDraft(draft, data) {
+    if (draft === undefined || draft === null) return { ok: true, draft: null };
+    if (!isObj(draft)) return { ok: false, error: 'المسودة داخل الملف غير صالحة.' };
+    const s = isObj(draft.sel) ? draft.sel : {};
+    const outSel = {};
+    for (const cat of CAT_KEYS) {
+      const v = s[cat];
+      if (v === undefined || v === null) { outSel[cat] = null; continue; }
+      if (typeof v !== 'string' || !data[cat].some(r => r.id === v)) return { ok: false, error: 'المسودة بتشاور على سجل مش موجود (' + CATS[cat].single + ').' };
+      outSel[cat] = v;
+    }
+    if (draft.action !== undefined && typeof draft.action !== 'string') return { ok: false, error: 'نص الأكشن في المسودة غير صالح.' };
+    return { ok: true, draft: { sel: outSel, action: draft.action || '' } };
+  }
+
+  /* =========================================================
+     التخزين المحلي
+     ========================================================= */
+  function storageGet(key) { return window.localStorage.getItem(key); }
+
+  function loadAll() {
+    let raw;
+    try {
+      raw = storageGet(DATA_KEY);
+    } catch (e) {
+      storageMode = 'unavailable';
+      draftWritable = false;
+      db = clone(SEED);
+      return;
+    }
+    if (raw === null) {
+      // أول تشغيل فقط: نزرع البيانات الأصلية
+      db = clone(SEED);
+      persist();
+    } else {
+      try {
+        const obj = JSON.parse(raw);
+        if (!isObj(obj) || typeof obj.schemaVersion !== 'number' || obj.schemaVersion < 1 || obj.schemaVersion > SCHEMA_VERSION) throw new Error('schema');
+        const v = validateData(obj.data);
+        if (!v.ok) throw new Error('data');
+        db = v.data; // القوائم الفاضية بيانات صحيحة، مفيش إعادة زرع
+      } catch (e) {
+        storageMode = 'corrupt';
+        corruptRaw = raw;
+        db = clone(SEED);
+      }
+    }
+    loadDraft();
+  }
+
+  function persist() {
+    if (storageMode === 'unavailable' || storageMode === 'corrupt') { renderStorage(); return false; }
+    try {
+      window.localStorage.setItem(DATA_KEY, JSON.stringify({ app: APP_ID, schemaVersion: SCHEMA_VERSION, data: db }));
+      storageMode = 'ok';
+      renderStorage();
+      return true;
+    } catch (e) {
+      storageMode = 'error';
+      renderStorage();
+      return false;
+    }
+  }
+
+  function currentDraft() {
+    const hasSel = CAT_KEYS.some(c => sel[c]);
+    if (!hasSel && !actionText) return null;
+    return { sel: Object.assign({}, sel), action: actionText };
+  }
+  function saveDraft() {
+    if (!draftWritable) return;
+    try {
+      const d = currentDraft();
+      if (d) window.localStorage.setItem(DRAFT_KEY, JSON.stringify(Object.assign({ schemaVersion: SCHEMA_VERSION }, d)));
+      else window.localStorage.removeItem(DRAFT_KEY);
+    } catch (e) { /* المسودة اختيارية */ }
+  }
+  let draftTimer = 0;
+  function saveDraftSoon() { clearTimeout(draftTimer); draftTimer = setTimeout(saveDraft, 300); }
+  function loadDraft() {
+    try {
+      const raw = storageGet(DRAFT_KEY);
+      if (!raw) return;
+      const o = JSON.parse(raw);
+      if (!isObj(o)) return;
+      const s = isObj(o.sel) ? o.sel : {};
+      for (const cat of CAT_KEYS) if (typeof s[cat] === 'string' && find(cat, s[cat])) sel[cat] = s[cat];
+      if (typeof o.action === 'string') actionText = o.action;
+    } catch (e) { /* تجاهل مسودة تالفة */ }
+  }
+
+  function renderStorage() {
+    const pill = $('storage-pill'), txt = $('storage-text'), banner = $('banner');
+    banner.textContent = '';
+    banner.className = 'banner';
+    let show = false;
+    const add = (title, body, buttons) => {
+      const t = h('div', { class: 'banner-text' }, h('strong', { text: title }), body);
+      const a = h('div', { class: 'banner-actions' }, buttons);
+      banner.append(icon('alert'), t, a);
+      show = true;
+    };
+    if (storageMode === 'ok') {
+      pill.dataset.state = 'ok'; txt.textContent = 'محفوظ تلقائيًا على هذا الجهاز';
+    } else if (storageMode === 'unavailable') {
+      pill.dataset.state = 'warn'; txt.textContent = 'الحفظ غير متاح — جلسة مؤقتة';
+      add('المتصفح مانع الحفظ المحلي', 'تقدر تشتغل عادي، بس أي تعديل هيضيع لما تقفل الصفحة. صدّر نسخة احتياطية قبل ما تقفل.',
+        [h('button', { type: 'button', class: 'btn btn-ghost btn-sm', onclick: exportBackup }, 'تصدير نسخة احتياطية')]);
+    } else if (storageMode === 'error') {
+      pill.dataset.state = 'bad'; txt.textContent = 'تعذّر الحفظ';
+      banner.classList.add('bad');
+      add('آخر تعديل ما اتحفظش', 'ممكن مساحة التخزين تكون مليانة أو المتصفح منع الكتابة. التعديلات موجودة في الصفحة دي بس — صدّر نسخة احتياطية.',
+        [h('button', { type: 'button', class: 'btn btn-ghost btn-sm', onclick: () => { if (persist()) toast('تم الحفظ بنجاح', 'ok'); } }, 'إعادة المحاولة'),
+         h('button', { type: 'button', class: 'btn btn-ghost btn-sm', onclick: exportBackup }, 'تصدير نسخة احتياطية')]);
+    } else if (storageMode === 'corrupt') {
+      pill.dataset.state = 'bad'; txt.textContent = 'البيانات المحفوظة تالفة — الحفظ متوقف';
+      banner.classList.add('bad');
+      add('البيانات المحفوظة في المتصفح تالفة أو بصيغة غير مفهومة',
+        'ما اتمسحتش ولا اتبدّلت. شغالين دلوقتي بالبيانات الأصلية في جلسة مؤقتة. تقدر تنزّل المحتوى التالف للمراجعة، أو تستورد نسخة احتياطية، أو تعتمد البيانات الحالية.',
+        [h('button', { type: 'button', class: 'btn btn-ghost btn-sm', onclick: () => download(corruptRaw || '', 'corrupt-storage-' + today() + '.txt', 'text/plain') }, 'تنزيل المحتوى التالف'),
+         h('button', { type: 'button', class: 'btn btn-ghost btn-sm', onclick: () => $('file-import').click() }, 'استيراد نسخة احتياطية'),
+         h('button', { type: 'button', class: 'btn btn-danger-ghost btn-sm', onclick: adoptCurrentData }, 'اعتماد البيانات الحالية')]);
+    }
+    banner.hidden = !show;
+  }
+
+  async function adoptCurrentData() {
+    const ok = await confirmDialog({
+      title: 'استبدال البيانات التالفة؟',
+      body: 'هيتم مسح المحتوى التالف المحفوظ في المتصفح واستبداله بالبيانات المعروضة دلوقتي. لو محتاج المحتوى القديم نزّله الأول.',
+      okText: 'استبدال وحفظ', danger: true
+    });
+    if (!ok) return;
+    storageMode = 'ok';
+    corruptRaw = null;
+    if (persist()) toast('تم اعتماد البيانات الحالية وحفظها', 'ok');
+  }
+
+  /* =========================================================
+     قوائم الاختيار (Combobox)
+     ========================================================= */
+  const pickers = {};
+  let openPicker = null;
+  const isSheet = () => window.matchMedia('(max-width: 640px)').matches;
+
+  function nameNode(cat, r) {
+    return cat === 'sites' ? h('span', { dir: 'ltr', class: 'ltr', text: r.name }) : h('span', { text: r.name });
+  }
+  function metaNode(cat, r) {
+    if (cat === 'sites') return null;
+    const m = h('span', { class: 'opt-meta' });
+    const ph = (r.phones || []).filter(Boolean);
+    if (ph.length) m.append(h('span', { class: 'num', dir: 'ltr', text: ph[0] + (ph.length > 1 ? ' +' + (ph.length - 1) : '') }));
+    if (cat === 'drivers' && clean(r.vehicleNumber)) m.append(h('span', { dir: 'rtl', class: 'ltr', text: '🚗 ' + r.vehicleNumber }));
+    else if (r.nationalId) m.append(h('span', null, 'هوية ', h('span', { class: 'num', dir: 'ltr', text: '…' + r.nationalId.slice(-4) })));
+    return m;
+  }
+
+  function buildPicker(cat, mount) {
+    const c = CATS[cat];
+    const base = 'pk-' + cat;
+    const label = h('div', { class: 'label', id: base + '-label' },
+      c.title, h('span', { class: cat === 'sites' ? 'tag' : 'tag optional', text: cat === 'sites' ? 'مطلوب' : 'اختياري' }));
+    const value = h('span', { class: 'pv', id: base + '-value' });
+    const trigger = h('button', {
+      type: 'button', class: 'picker-trigger empty', id: base + '-trigger',
+      'aria-haspopup': 'listbox', 'aria-expanded': 'false', 'aria-labelledby': base + '-label ' + base + '-value',
+      'aria-describedby': base + '-hint'
+    }, icon(c.icon, 'lead'), value, icon('chev', 'chev'));
+    const clearBtn = h('button', { type: 'button', class: 'icon-btn', hidden: true, 'aria-label': 'مسح اختيار ' + c.title, title: 'مسح الاختيار' }, icon('x'));
+    const input = h('input', {
+      type: 'search', class: 'input', id: base + '-search', role: 'combobox', 'aria-expanded': 'true',
+      'aria-controls': base + '-list', 'aria-autocomplete': 'list', autocomplete: 'off', spellcheck: 'false',
+      placeholder: c.search, enterkeyhint: 'search'
+    });
+    const count = h('div', { class: 'pop-count', 'aria-live': 'polite' });
+    const list = h('ul', { class: 'opt-list', id: base + '-list', role: 'listbox', 'aria-label': c.plural });
+    const empty = h('div', { class: 'pop-empty', hidden: true }, 'لا توجد نتائج');
+    const closeBtn = h('button', { type: 'button', class: 'icon-btn', 'aria-label': 'إغلاق القائمة' }, icon('x'));
+    const pop = h('div', { class: 'pop', hidden: true },
+      h('div', { class: 'pop-head' }, h('span', { class: 'pop-title', text: 'اختيار ' + c.title }), closeBtn),
+      h('div', { class: 'search-box' }, icon('search'), h('label', { class: 'sr-only', for: base + '-search', text: 'بحث في ' + c.plural }), input),
+      count, list, empty);
+    const anchor = h('div', { class: 'picker-anchor' }, h('div', { class: 'picker-row' }, trigger, clearBtn), pop);
+    const details = h('div', { class: 'sel-card', hidden: true, 'aria-live': 'polite' });
+    const hint = h('p', { class: 'hint', id: base + '-hint' });
+    mount.append(h('div', { class: 'field', 'data-cat': cat }, label, anchor, details, hint));
+
+    const p = { cat, trigger, value, clearBtn, input, list, empty, count, pop, details, hint, anchor, results: [], active: -1 };
+    pickers[cat] = p;
+
+    trigger.addEventListener('click', () => (openPicker === p ? closePicker(p, true) : openPickerFn(p)));
+    trigger.addEventListener('keydown', e => {
+      if ((e.key === 'ArrowDown' || e.key === 'ArrowUp') && openPicker !== p) { e.preventDefault(); openPickerFn(p); }
+    });
+    clearBtn.addEventListener('click', () => { setSelection(cat, null); trigger.focus(); });
+    closeBtn.addEventListener('click', () => closePicker(p, true));
+    input.addEventListener('input', () => { p.active = -1; renderOptions(p); });
+    input.addEventListener('keydown', e => onSearchKey(p, e));
+    list.addEventListener('mousedown', e => e.preventDefault());
+    list.addEventListener('click', e => {
+      const li = e.target.closest('.opt');
+      if (li) choose(p, Number(li.dataset.i));
+    });
+  }
+
+  function openPickerFn(p) {
+    if (openPicker && openPicker !== p) closePicker(openPicker, false);
+    openPicker = p;
+    p.input.value = '';
+    p.active = -1;
+    p.pop.classList.remove('up');
+    p.pop.hidden = false;
+    p.trigger.setAttribute('aria-expanded', 'true');
+    renderOptions(p);
+    if (isSheet()) {
+      $('backdrop').hidden = false;
+      document.body.classList.add('sheet-open');
+    } else {
+      const r = p.anchor.getBoundingClientRect();
+      const below = window.innerHeight - r.bottom, above = r.top;
+      if (below < 300 && above > below) p.pop.classList.add('up');
+    }
+    // انتقل للاختيار الحالي داخل القائمة بدون اختياره تلقائيًا
+    const cur = p.list.querySelector('[aria-selected="true"]');
+    if (cur) cur.scrollIntoView({ block: 'nearest' });
+    p.input.focus({ preventScroll: true });
+  }
+
+  function closePicker(p, returnFocus) {
+    if (!p) return;
+    p.pop.hidden = true;
+    p.trigger.setAttribute('aria-expanded', 'false');
+    p.input.removeAttribute('aria-activedescendant');
+    if (openPicker === p) openPicker = null;
+    $('backdrop').hidden = true;
+    document.body.classList.remove('sheet-open');
+    if (returnFocus) p.trigger.focus({ preventScroll: true });
+  }
+
+  function renderOptions(p) {
+    const q = p.input.value;
+    const items = db[p.cat].filter(r => matches(haystack(p.cat, r), q));
+    p.results = items;
+    p.list.textContent = '';
+    const frag = document.createDocumentFragment();
+    items.forEach((r, i) => {
+      const body = h('span', { class: 'opt-body' }, h('span', { class: 'opt-name' }, nameNode(p.cat, r)), metaNode(p.cat, r));
+      frag.append(h('li', {
+        class: 'opt', role: 'option', id: p.list.id + '-o' + i, 'data-i': i,
+        'aria-selected': sel[p.cat] === r.id ? 'true' : 'false'
+      }, icon('check', 'check'), body));
+    });
+    p.list.append(frag);
+    p.empty.hidden = items.length > 0;
+    p.list.hidden = items.length === 0;
+    const total = db[p.cat].length;
+    p.count.textContent = norm(q) ? ('النتائج: ' + items.length + ' من ' + total) : ('المسجّل: ' + total);
+    setActive(p, p.active);
+  }
+
+  function setActive(p, i) {
+    const opts = p.list.children;
+    if (p.active >= 0 && opts[p.active]) opts[p.active].classList.remove('active');
+    p.active = i;
+    if (i >= 0 && opts[i]) {
+      opts[i].classList.add('active');
+      p.input.setAttribute('aria-activedescendant', opts[i].id);
+      opts[i].scrollIntoView({ block: 'nearest' });
+    } else {
+      p.input.removeAttribute('aria-activedescendant');
+    }
+  }
+
+  function onSearchKey(p, e) {
+    const n = p.results.length;
+    if (e.key === 'ArrowDown') { e.preventDefault(); if (n) setActive(p, p.active < n - 1 ? p.active + 1 : 0); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); if (n) setActive(p, p.active > 0 ? p.active - 1 : n - 1); }
+    else if (e.key === 'Home' && p.active >= 0) { e.preventDefault(); setActive(p, 0); }
+    else if (e.key === 'End' && p.active >= 0) { e.preventDefault(); setActive(p, n - 1); }
+    else if (e.key === 'Enter') { e.preventDefault(); if (p.active >= 0) choose(p, p.active); } // لا اختيار تلقائي
+    else if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); closePicker(p, true); }
+    else if (e.key === 'Tab') closePicker(p, false);
+  }
+
+  function choose(p, i) {
+    const r = p.results[i];
+    if (!r) return;
+    closePicker(p, true);
+    setSelection(p.cat, r.id);
+  }
+
+  function setSelection(cat, id) {
+    sel[cat] = id;
+    renderCompose();
+    renderData();
+    saveDraftSoon();
+  }
+
+  function detailLine(k, valueNode) {
+    return h('div', { class: 'sel-line' }, h('span', { class: 'k', text: k }), h('span', { class: 'v' }, valueNode));
+  }
+  function renderPicker(p) {
+    const r = find(p.cat, sel[p.cat]);
+    if (sel[p.cat] && !r) sel[p.cat] = null;
+    p.value.textContent = '';
+    if (r) {
+      p.value.append(nameNode(p.cat, r));
+      p.trigger.classList.remove('empty');
+      p.clearBtn.hidden = false;
+    } else {
+      p.value.textContent = CATS[p.cat].placeholder;
+      p.trigger.classList.add('empty');
+      p.clearBtn.hidden = true;
+    }
+    p.details.textContent = '';
+    if (r && p.cat !== 'sites') {
+      (r.phones || []).filter(x => clean(x)).forEach((ph, i) =>
+        p.details.append(detailLine(i === 0 ? 'الهاتف' : 'هاتف إضافي', h('span', { class: 'num', dir: 'ltr', text: ph }))));
+      if (clean(r.nationalId)) p.details.append(detailLine('رقم الهوية', h('span', { class: 'num', dir: 'ltr', text: r.nationalId })));
+      if (p.cat === 'drivers' && clean(r.vehicleNumber)) p.details.append(detailLine('رقم السيارة', h('span', { class: 'plate', dir: 'rtl', text: r.vehicleNumber })));
+      p.details.hidden = p.details.childNodes.length === 0;
+    } else {
+      p.details.hidden = true;
+    }
+    if (openPicker === p) renderOptions(p);
+  }
+
+  /* =========================================================
+     التبويب الأول: العرض
+     ========================================================= */
+  function renderCompose() {
+    CAT_KEYS.forEach(c => renderPicker(pickers[c]));
+    const msg = getMessage();
+    const missing = missingParts();
+    const ready = missing.length === 0;
+    const bubble = $('bubble'), empty = $('empty-preview'), status = $('msg-status');
+
+    if (msg) { bubble.textContent = msg; bubble.hidden = false; empty.hidden = true; }
+    else { bubble.textContent = ''; bubble.hidden = true; empty.hidden = false; }
+
+    status.textContent = '';
+    if (ready) { status.className = 'status ready'; status.append(icon('check'), 'جاهزة للنسخ'); }
+    else if (msg) { status.className = 'status'; status.textContent = 'مسودة'; }
+    else { status.className = 'status'; status.hidden = true; }
+    status.hidden = !msg;
+
+    ['btn-copy', 'btn-wa', 'btn-share'].forEach(id => { $(id).disabled = !ready; });
+    $('missing-note').textContent = ready ? '' : 'عشان تنسخ أو تشارك، ناقص: ' + missing.join(' و');
+
+    const siteHint = pickers.sites.hint;
+    siteHint.textContent = find('sites', sel.sites) ? '' : 'مطلوب للنسخ والمشاركة — اختار موقع واحد.';
+    siteHint.classList.toggle('need', !!msg && !find('sites', sel.sites));
+    const ah = $('action-hint');
+    const hasAction = !!normalizeAction(actionText).trim();
+    ah.textContent = hasAction ? '' : 'مطلوب للنسخ والمشاركة — اكتب الشغل المطلوب، وتقدر تكتب أكتر من سطر.';
+    ah.classList.toggle('need', !!msg && !hasAction);
+
+    $('long-warn').hidden = !(ready && waUrl(msg).length > WA_LONG_URL);
+  }
+
+  /* =========================================================
+     النسخ والمشاركة
+     ========================================================= */
+  const waUrl = msg => 'https://wa.me/?text=' + encodeURIComponent(msg);
+
+  async function copyText(text) {
+    if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function' && window.isSecureContext !== false) {
+      try { await navigator.clipboard.writeText(text); return true; } catch (e) { /* ننتقل للبديل */ }
+    }
+    return fallbackCopy(text);
+  }
+  function fallbackCopy(text) {
+    const active = document.activeElement;
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.setAttribute('readonly', '');
+    ta.setAttribute('aria-hidden', 'true');
+    ta.style.cssText = 'position:fixed;top:0;left:0;width:1px;height:1px;opacity:0;padding:0;border:0;font-size:16px;';
+    document.body.appendChild(ta);
+    ta.focus();
+    ta.select();
+    try { ta.setSelectionRange(0, text.length); } catch (e) { /* */ }
+    let ok = false;
+    try { ok = document.execCommand('copy') === true; } catch (e) { ok = false; }
+    ta.remove();
+    if (active && active.focus) active.focus({ preventScroll: true });
+    return ok;
+  }
+  function showManualCopy(text) {
+    const d = $('dlg-manual'), ta = $('manual-text');
+    ta.value = text;
+    d.showModal();
+    ta.focus();
+    ta.select();
+  }
+
+  async function onCopy() {
+    if (missingParts().length) return;
+    const msg = getMessage();
+    const ok = await copyText(msg);
+    if (ok) toast('تم نسخ الرسالة', 'ok');
+    else showManualCopy(msg);
+  }
+
+  function onWhatsApp() {
+    if (missingParts().length) return;
+    const msg = getMessage();
+    const a = document.createElement('a');
+    a.href = waUrl(msg);
+    a.target = '_blank';
+    a.rel = 'noopener noreferrer';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    toast('بنفتح واتساب… اختار المحادثة واضغط إرسال من هناك.');
+  }
+
+  async function onDeviceShare() {
+    if (missingParts().length || !navigator.share) return;
+    const msg = getMessage();
+    try {
+      await navigator.share({ text: msg });
+    } catch (e) {
+      if (e && e.name === 'AbortError') return; // المستخدم لغى — بهدوء
+      toast('المشاركة عبر الجهاز مش متاحة هنا. استخدم «نسخ الرسالة» والصقها.');
+    }
+  }
+
+  /* =========================================================
+     التبويب الثاني: إدارة البيانات
+     ========================================================= */
+  let dataCat = 'sites';
+  let dataQuery = '';
+
+  function renderSeg() {
+    const seg = $('seg');
+    seg.textContent = '';
+    CAT_KEYS.forEach(cat => {
+      seg.append(h('button', {
+        type: 'button', class: 'seg-btn', 'aria-pressed': cat === dataCat ? 'true' : 'false',
+        onclick: () => { dataCat = cat; dataQuery = ''; $('data-search').value = ''; renderData(); }
+      }, h('span', { text: CATS[cat].plural }), h('span', { class: 'cnt num', text: String(db[cat].length) })));
+    });
+  }
+
+  function renderData() {
+    renderSeg();
+    const c = CATS[dataCat];
+    $('data-search').placeholder = c.search;
+    const addBtn = $('btn-add');
+    addBtn.lastChild.textContent = 'إضافة ' + c.single;
+    const all = db[dataCat];
+    const items = all.filter(r => matches(haystack(dataCat, r), dataQuery));
+    $('data-count').textContent = norm(dataQuery) ? ('عرض ' + items.length + ' من ' + all.length + ' ' + c.plural) : ('إجمالي ' + c.plural + ': ' + all.length);
+    const grid = $('rec-grid');
+    grid.textContent = '';
+    const frag = document.createDocumentFragment();
+    items.forEach(r => frag.append(recordCard(dataCat, r)));
+    grid.append(frag);
+    const empty = $('rec-empty');
+    empty.hidden = items.length > 0;
+    empty.textContent = all.length === 0 ? ('مفيش ' + c.plural + ' مسجلين. اضغط «إضافة ' + c.single + '».') : 'لا توجد نتائج مطابقة للبحث.';
+  }
+
+  function recordCard(cat, r) {
+    const selected = sel[cat] === r.id;
+    const card = h('article', { class: 'rec' + (selected ? ' is-selected' : '') });
+    if (selected) card.append(h('span', { class: 'rec-chip', text: 'مختار في الرسالة الحالية' }));
+    card.append(h('div', { class: 'rec-name' }, nameNode(cat, r)));
+    if (cat !== 'sites') {
+      const lines = h('div', { class: 'rec-lines' });
+      (r.phones || []).filter(x => clean(x)).forEach((ph, i) => lines.append(detailLine(i === 0 ? 'الهاتف' : 'هاتف إضافي', h('span', { class: 'num', dir: 'ltr', text: ph }))));
+      if (clean(r.nationalId)) lines.append(detailLine('رقم الهوية', h('span', { class: 'num', dir: 'ltr', text: r.nationalId })));
+      if (cat === 'drivers' && clean(r.vehicleNumber)) lines.append(detailLine('رقم السيارة', h('span', { class: 'plate', dir: 'rtl', text: r.vehicleNumber })));
+      card.append(lines);
+    }
+    card.append(h('div', { class: 'rec-actions' },
+      h('button', { type: 'button', class: 'btn btn-ghost btn-sm', 'aria-label': 'تعديل ' + r.name, onclick: () => openForm(cat, r) }, icon('edit'), 'تعديل'),
+      h('button', { type: 'button', class: 'btn btn-danger-ghost btn-sm', 'aria-label': 'حذف ' + r.name, onclick: () => deleteRecord(cat, r) }, icon('trash'), 'حذف')));
+    return card;
+  }
+
+  async function deleteRecord(cat, r) {
+    const c = CATS[cat];
+    const body = h('div', { class: 'fields', style: 'gap:8px' },
+      h('p', null, 'هيتم حذف ' + c.single + ':'),
+      h('p', { style: 'font-weight:800' }, nameNode(cat, r)),
+      sel[cat] === r.id ? h('p', { class: 'hint need', text: 'مختار في الرسالة الحالية، وهيتشال منها فورًا.' }) : null,
+      h('p', { class: 'hint', text: 'الحذف نهائي — الرجوع ممكن بس من نسخة احتياطية.' }));
+    const ok = await confirmDialog({ title: 'حذف ' + c.single + '؟', body, okText: 'حذف', danger: true });
+    if (!ok) return;
+    const idx = db[cat].findIndex(x => x.id === r.id);
+    if (idx < 0) return;
+    db[cat].splice(idx, 1);
+    if (sel[cat] === r.id) sel[cat] = null;
+    const saved = persist();
+    renderAll();
+    saveDraft();
+    toast(saved ? 'تم الحذف' : 'اتحذف في الجلسة دي بس — الحفظ غير متاح', saved ? 'ok' : '');
+  }
+
+  /* ---------- نافذة الإضافة/التعديل ---------- */
+  let formState = null;
+
+  function inputField(id, labelText, attrs, hintText) {
+    const input = h('input', Object.assign({ id, class: 'input', type: 'text', autocomplete: 'off' }, attrs || {}));
+    return { input, el: h('div', { class: 'field' }, h('label', { class: 'label', for: id, text: labelText }), input, hintText ? h('p', { class: 'hint', text: hintText }) : null) };
+  }
+
+  function openForm(cat, rec) {
+    const c = CATS[cat];
+    formState = { cat, id: rec ? rec.id : null, confirmWarn: false, inputs: {} };
+    $('form-title').textContent = (rec ? 'تعديل ' : 'إضافة ') + c.single;
+    const box = $('form-fields');
+    box.textContent = '';
+    resetFormMsg();
+    if (cat === 'sites') {
+      const f = inputField('f-name', 'اسم الموقع والكود', { dir: 'ltr', class: 'input ltr-input', spellcheck: 'false', placeholder: 'RAHMANIA 3445DE' },
+        'اكتب الاسم والكود في نفس الخانة بالظبط زي ما بيتكتب.');
+      f.input.value = rec ? rec.name : '';
+      formState.inputs.name = f.input;
+      box.append(f.el);
+    } else {
+      const fn = inputField('f-name', 'الاسم', { dir: 'auto' });
+      fn.input.value = rec ? rec.name : '';
+      formState.inputs.name = fn.input;
+      box.append(fn.el);
+
+      const phoneWrap = h('div', { class: 'field' }, h('span', { class: 'label', id: 'f-phones-label', text: 'الهاتف' }));
+      const rows = h('div', { class: 'fields', style: 'gap:8px' });
+      const addPhone = h('button', { type: 'button', class: 'link-btn' }, icon('plus'), h('span'));
+      phoneWrap.append(rows, addPhone);
+      formState.phoneRows = rows;
+      const refreshAdd = () => {
+        const n = rows.children.length;
+        addPhone.hidden = n >= 3;
+        addPhone.lastChild.textContent = n === 1 ? 'إضافة هاتف ثانٍ' : 'إضافة هاتف آخر';
+        Array.from(rows.children).forEach((row, i) => {
+          row.querySelector('input').setAttribute('aria-label', i === 0 ? 'الهاتف الأساسي' : 'هاتف إضافي ' + i);
+          const rm = row.querySelector('.icon-btn');
+          if (rm) rm.hidden = i === 0;
+        });
+      };
+      const addRow = (val) => {
+        const inp = h('input', { class: 'input ltr-input num', type: 'tel', dir: 'ltr', inputmode: 'tel', autocomplete: 'off', placeholder: '01xxxxxxxxx' });
+        inp.value = val || '';
+        const rm = h('button', { type: 'button', class: 'icon-btn', 'aria-label': 'إزالة هذا الهاتف', title: 'إزالة' }, icon('x'));
+        const row = h('div', { class: 'phone-row' }, inp, rm);
+        rm.addEventListener('click', () => { row.remove(); refreshAdd(); formChanged(); rows.querySelector('input').focus(); });
+        rows.append(row);
+        refreshAdd();
+        return inp;
+      };
+      const phones = rec && rec.phones && rec.phones.length ? rec.phones : [''];
+      phones.forEach(p => addRow(p));
+      addPhone.addEventListener('click', () => { addRow('').focus(); formChanged(); });
+      box.append(phoneWrap);
+
+      const fi = inputField('f-nid', 'رقم الهوية', { dir: 'ltr', class: 'input ltr-input num', inputmode: 'numeric', placeholder: '14 رقم' });
+      fi.input.value = rec ? rec.nationalId : '';
+      formState.inputs.nationalId = fi.input;
+      box.append(fi.el);
+
+      if (cat === 'drivers') {
+        const fv = inputField('f-vehicle', 'رقم السيارة', { dir: 'auto', placeholder: 'مثال: ف ر ل 4572' }, 'اكتب الحروف والأرقام بنفس ترتيب اللوحة.');
+        fv.input.value = rec ? (rec.vehicleNumber || '') : '';
+        formState.inputs.vehicleNumber = fv.input;
+        box.append(fv.el);
+      }
+    }
+    $('form-save').textContent = 'حفظ';
+    $('dlg-form').showModal();
+    formState.inputs.name.focus();
+  }
+
+  function resetFormMsg() { const m = $('form-msg'); m.hidden = true; m.textContent = ''; m.className = ''; }
+  function formChanged() {
+    if (!formState) return;
+    if (formState.confirmWarn) { formState.confirmWarn = false; $('form-save').textContent = 'حفظ'; resetFormMsg(); }
+  }
+  function showFormMsg(kind, title, items) {
+    const m = $('form-msg');
+    m.className = 'msg-box ' + kind;
+    m.textContent = '';
+    m.append(h('strong', { text: title }), h('ul', null, items.map(t => h('li', { text: t }))));
+    m.hidden = false;
+  }
+
+  function submitForm(e) {
+    e.preventDefault();
+    if (!formState) return;
+    const { cat, id } = formState;
+    const c = CATS[cat];
+    const errors = [], warns = [];
+    const name = formState.inputs.name.value.trim();
+    if (!name) errors.push('الاسم مطلوب.');
+    let rec;
+    if (cat === 'sites') {
+      const k = siteKey(name);
+      if (name && db.sites.some(s => s.id !== id && siteKey(s.name) === k)) errors.push('الموقع ده مسجل قبل كده بنفس الاسم.');
+      rec = { id: id || newId(cat), name };
+    } else {
+      const phones = Array.from(formState.phoneRows.querySelectorAll('input'))
+        .map(i => toLatinDigits(i.value).replace(/\s+/g, ''))
+        .filter(Boolean);
+      const nid = toLatinDigits(formState.inputs.nationalId.value).trim();
+      if (nid && db[cat].some(p => p.id !== id && clean(p.nationalId) === nid)) errors.push('رقم الهوية ده مسجل لـ' + c.single + ' تاني في نفس القائمة.');
+      if (!nid) warns.push('رقم الهوية فاضي.');
+      else if (!/^\d{14}$/.test(nid)) warns.push('رقم الهوية عادةً 14 رقم، والمكتوب ' + nid.length + ' — راجعه.');
+      if (!phones.length) warns.push('مفيش رقم هاتف.');
+      phones.forEach(ph => { if (!/^01\d{9}$/.test(ph)) warns.push('الهاتف ' + ph + ' مش بالشكل المعتاد (11 رقم يبدأ بـ 01) — راجعه.'); });
+      if (new Set(phones).size !== phones.length) warns.push('فيه رقم هاتف متكرر لنفس الشخص.');
+      rec = { id: id || newId(cat), name, nationalId: nid, phones };
+      if (cat === 'drivers') {
+        const v = formState.inputs.vehicleNumber.value.trim();
+        if (!v) warns.push('رقم السيارة فاضي.');
+        rec.vehicleNumber = v;
+      }
+    }
+    if (errors.length) { showFormMsg('err', 'مينفعش الحفظ:', errors); return; }
+    if (warns.length && !formState.confirmWarn) {
+      formState.confirmWarn = true;
+      showFormMsg('warn', 'تنبيه قبل الحفظ (التنبيه مش بيأكد صحة الرقم أو خطأه رسميًا):', warns);
+      $('form-save').textContent = 'حفظ رغم التنبيه';
+      return;
+    }
+    if (id) {
+      const idx = db[cat].findIndex(x => x.id === id);
+      if (idx >= 0) db[cat][idx] = rec; else db[cat].push(rec);
+    } else {
+      db[cat].push(rec);
+    }
+    const saved = persist();
+    $('dlg-form').close();
+    formState = null;
+    renderAll();
+    toast(saved ? (id ? 'تم حفظ التعديل' : 'تمت الإضافة') : 'اتعدّل في الجلسة دي بس — الحفظ غير متاح', saved ? 'ok' : '');
+  }
+
+  function newId(cat) {
+    let id;
+    do { id = CATS[cat].idPrefix + '-' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
+    while (db[cat].some(r => r.id === id));
+    return id;
+  }
+
+  /* ---------- نافذة تأكيد عامة ---------- */
+  function confirmDialog(opts) {
+    return new Promise(resolve => {
+      const d = $('dlg-confirm');
+      $('confirm-title').textContent = opts.title;
+      const body = $('confirm-body');
+      body.textContent = '';
+      if (opts.body instanceof Node) body.append(opts.body); else body.append(h('p', { text: opts.body }));
+      const ok = $('confirm-ok');
+      ok.textContent = opts.okText || 'تأكيد';
+      ok.className = 'btn ' + (opts.danger ? 'btn-danger' : 'btn-primary');
+      $('confirm-cancel').hidden = !!opts.alert;
+      let result = false;
+      const onOk = () => { result = true; d.close(); };
+      const onCancel = () => d.close();
+      const onClose = () => {
+        ok.removeEventListener('click', onOk);
+        $('confirm-cancel').removeEventListener('click', onCancel);
+        d.removeEventListener('close', onClose);
+        resolve(result);
+      };
+      ok.addEventListener('click', onOk);
+      $('confirm-cancel').addEventListener('click', onCancel);
+      d.addEventListener('close', onClose);
+      d.showModal();
+      (opts.alert ? ok : $('confirm-cancel')).focus();
+    });
+  }
+
+  /* =========================================================
+     النسخ الاحتياطي
+     ========================================================= */
+  function today() {
+    const d = new Date();
+    return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+  }
+  function download(text, filename, type) {
+    const blob = new Blob([text], { type: (type || 'application/json') + ';charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = h('a', { href: url, download: filename });
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 4000);
+  }
+  function exportBackup() {
+    const payload = { app: APP_ID, schemaVersion: SCHEMA_VERSION, exportedAt: new Date().toISOString(), data: db };
+    const d = currentDraft();
+    if (d) payload.draft = d;
+    download(JSON.stringify(payload, null, 2), 'site-messages-backup-' + today() + '.json', 'application/json');
+    toast('تم تجهيز ملف النسخة الاحتياطية — هتلاقيه في التنزيلات', 'ok');
+  }
+
+  function parseBackup(text) {
+    let obj;
+    try { obj = JSON.parse(text); } catch (e) { return { ok: false, errors: ['الملف مش JSON صالح.'] }; }
+    if (!isObj(obj)) return { ok: false, errors: ['الملف مش نسخة احتياطية من البرنامج.'] };
+    if (typeof obj.schemaVersion !== 'number' || !Number.isInteger(obj.schemaVersion) || obj.schemaVersion < 1)
+      return { ok: false, errors: ['رقم إصدار البيانات (schemaVersion) مفقود أو غير صالح.'] };
+    if (obj.schemaVersion > SCHEMA_VERSION) return { ok: false, errors: ['النسخة دي من إصدار أحدث من البرنامج ومينفعش تتقري هنا.'] };
+    const v = validateData(obj.data);
+    if (!v.ok) return { ok: false, errors: v.errors };
+    const dv = validateDraft(obj.draft, v.data);
+    if (!dv.ok) return { ok: false, errors: [dv.error] };
+    return { ok: true, data: v.data, draft: dv.draft };
+  }
+
+  async function onImportFile(e) {
+    const file = e.target.files && e.target.files[0];
+    e.target.value = '';
+    if (!file) return;
+    let text;
+    try { text = await file.text(); } catch (err) { toast('تعذّر قراءة الملف'); return; }
+    const res = parseBackup(text);
+    if (!res.ok) {
+      const list = res.errors.slice(0, 8);
+      if (res.errors.length > 8) list.push('… و' + (res.errors.length - 8) + ' مشكلة أخرى.');
+      await confirmDialog({
+        title: 'تم رفض ملف الاستيراد',
+        body: h('div', { class: 'msg-box err' }, h('strong', { text: 'ما اتغيرش أي حاجة في بياناتك. المشاكل:' }), h('ul', null, list.map(t => h('li', { text: t })))),
+        okText: 'تمام', alert: true
+      });
+      return;
+    }
+    const rows = CAT_KEYS.map(cat => h('tr', null, h('td', { text: CATS[cat].plural }), h('td', { class: 'num', text: String(db[cat].length) }), h('td', { class: 'num', text: String(res.data[cat].length) })));
+    const body = h('div', { class: 'fields', style: 'gap:12px' },
+      h('p', null, 'الاستيراد ', h('b', { text: 'هيستبدل كل البيانات الحالية' }), ' على المتصفح ده بالبيانات اللي في الملف. أي تعديل مش موجود في الملف هيضيع.'),
+      h('table', { class: 'counts' }, h('thead', null, h('tr', null, h('th', { text: 'القائمة' }), h('th', { text: 'الحالي' }), h('th', { text: 'في الملف' }))), h('tbody', null, rows)),
+      res.draft ? h('p', { class: 'hint', text: 'الملف فيه مسودة رسالة، وهتتحمّل مكان الاختيارات الحالية.' }) : null);
+    const ok = await confirmDialog({ title: 'استبدال البيانات بالنسخة الاحتياطية؟', body, okText: 'استيراد واستبدال', danger: true });
+    if (!ok) return;
+    applyImport(res);
+  }
+
+  function applyImport(res) {
+    // الحفظ أولًا: لو فشل، مفيش أي تغيير
+    let saved = false;
+    if (storageMode !== 'unavailable') {
+      try {
+        window.localStorage.setItem(DATA_KEY, JSON.stringify({ app: APP_ID, schemaVersion: SCHEMA_VERSION, data: res.data }));
+        saved = true;
+      } catch (e) {
+        confirmDialog({ title: 'تعذّر الاستيراد', body: 'المتصفح ما قبلش حفظ البيانات الجديدة (ممكن المساحة مليانة)، فما اتغيرش أي حاجة.', okText: 'تمام', alert: true });
+        return;
+      }
+      storageMode = 'ok';
+      corruptRaw = null;
+    }
+    db = res.data;
+    if (res.draft) {
+      CAT_KEYS.forEach(c => { sel[c] = res.draft.sel[c]; });
+      actionText = res.draft.action;
+      $('action').value = actionText;
+    } else {
+      CAT_KEYS.forEach(c => { if (!find(c, sel[c])) sel[c] = null; });
+    }
+    renderStorage();
+    renderAll();
+    saveDraft();
+    toast(saved ? 'تم الاستيراد بنجاح' : 'تم الاستيراد في الجلسة دي بس — الحفظ غير متاح', saved ? 'ok' : '');
+  }
+
+  /* =========================================================
+     التنبيه الصغير (Toast)
+     ========================================================= */
+  let toastTimer = 0;
+  function toast(text, kind, action) {
+    const t = $('toast');
+    clearTimeout(toastTimer);
+    t.textContent = '';
+    t.className = 'toast' + (kind ? ' ' + kind : '');
+    if (kind === 'ok') t.append(icon('check', 't-ic'));
+    t.append(h('span', { class: 't-text', text }));
+    if (action) t.append(h('button', { type: 'button', class: 't-act', onclick: () => { action.fn(); hideToast(); } }, action.label));
+    t.hidden = false;
+    toastTimer = setTimeout(hideToast, action ? 6000 : 2600);
+  }
+  function hideToast() { $('toast').hidden = true; }
+
+  /* =========================================================
+     التبويبات والتهيئة
+     ========================================================= */
+  function selectTab(which) {
+    const tabs = [$('tab-compose'), $('tab-data')];
+    tabs.forEach(t => {
+      const on = t.id === 'tab-' + which;
+      t.setAttribute('aria-selected', on ? 'true' : 'false');
+      t.tabIndex = on ? 0 : -1;
+      $(t.getAttribute('aria-controls')).hidden = !on;
+    });
+    if (openPicker) closePicker(openPicker, false);
+    if (which === 'data') renderData();
+  }
+
+  function renderAll() { renderCompose(); renderData(); }
+
+  function clearSelections() {
+    const prev = { sel: Object.assign({}, sel), action: actionText };
+    const had = CAT_KEYS.some(c => sel[c]) || actionText;
+    CAT_KEYS.forEach(c => { sel[c] = null; });
+    actionText = '';
+    $('action').value = '';
+    renderAll();
+    saveDraft();
+    if (had) toast('تم مسح الاختيارات', '', {
+      label: 'تراجع', fn: () => {
+        CAT_KEYS.forEach(c => { sel[c] = find(c, prev.sel[c]) ? prev.sel[c] : null; });
+        actionText = prev.action; $('action').value = actionText;
+        renderAll(); saveDraft();
+      }
+    });
+  }
+
+  function decorateIcons() {
+    document.querySelectorAll('[data-ic]').forEach(el => {
+      const name = el.getAttribute('data-ic');
+      if (el.tagName === 'SPAN') { el.setAttribute('aria-hidden', 'true'); el.innerHTML = svg(name); if (!el.classList.contains('badge-ic')) el.classList.add('i'); }
+      else el.prepend(icon(name));
+    });
+  }
+
+  function init() {
+    decorateIcons();
+    buildPicker('sites', $('mount-site'));
+    PEOPLE.forEach(c => buildPicker(c, $('mount-people')));
+
+    loadAll();
+    $('action').value = actionText;
+    renderStorage();
+    renderAll();
+
+    if (typeof navigator.share === 'function') $('btn-share').hidden = false;
+
+    $('action').addEventListener('input', e => { actionText = e.target.value; renderCompose(); saveDraftSoon(); });
+    $('btn-clear').addEventListener('click', clearSelections);
+    $('btn-copy').addEventListener('click', onCopy);
+    $('btn-wa').addEventListener('click', onWhatsApp);
+    $('btn-share').addEventListener('click', onDeviceShare);
+    $('manual-close').addEventListener('click', () => $('dlg-manual').close());
+
+    $('tab-compose').addEventListener('click', () => selectTab('compose'));
+    $('tab-data').addEventListener('click', () => selectTab('data'));
+    document.querySelector('[role="tablist"]').addEventListener('keydown', e => {
+      if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+      const next = document.activeElement.id === 'tab-compose' ? 'data' : 'compose';
+      selectTab(next);
+      $('tab-' + next).focus();
+    });
+
+    $('data-search').addEventListener('input', e => { dataQuery = e.target.value; renderData(); });
+    $('btn-add').addEventListener('click', () => openForm(dataCat, null));
+    $('btn-export').addEventListener('click', exportBackup);
+    $('btn-import').addEventListener('click', () => $('file-import').click());
+    $('file-import').addEventListener('change', onImportFile);
+
+    $('form').addEventListener('submit', submitForm);
+    $('form').addEventListener('input', formChanged);
+    $('form-cancel').addEventListener('click', () => $('dlg-form').close());
+    $('dlg-form').addEventListener('close', () => { formState = null; });
+
+    $('backdrop').addEventListener('click', () => closePicker(openPicker, false));
+    document.addEventListener('pointerdown', e => {
+      if (openPicker && !openPicker.anchor.contains(e.target)) closePicker(openPicker, false);
+    });
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape' && openPicker) { e.preventDefault(); closePicker(openPicker, true); }
+    });
+    window.addEventListener('pagehide', saveDraft);
+  }
+
+  // واجهة صغيرة للفحص الآلي فقط
+  window.SiteMessages = { buildMessage, getMessage, norm, matches, version: SCHEMA_VERSION };
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+  else init();
+})();
+
+</script>
+</body>
+</html>
